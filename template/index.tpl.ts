@@ -1,3 +1,7 @@
+/**
+ * 该文件自动生产，请勿修改
+ * The file is produced automatically, do not modify it
+ */
 import { AxiosInstance } from "axios";
 
 function replaceUrlPath(url: string, pathParams: { [key: string]: any } = {}) {
