@@ -1,0 +1,55 @@
+{
+  "name": "@clean-js/api-generator",
+  "version": "0.0.2",
+  "description": "",
+  "main": "./dist/index.js",
+  "bin": {
+    "api-gen": "./dist/index.js"
+  },
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup --config rollup.config.ts --configPlugin typescript",
+    "start": "npm run build && node ./dist/index.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "authors": [
+    "lujavascript@gmail.com"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist",
+    "template"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@types/jest": "^27",
+    "jest": "^27",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@types/axios": "^0.14.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/json-schema": "^7.0.11",
+    "@types/mkdirp": "^1.0.2",
+    "@types/node-fetch": "^2.6.2",
+    "chalk": "^4.1.2",
+    "change-case": "^4.1.2",
+    "fs-extra": "^10.1.0",
+    "jiti": "^1.16.0",
+    "json-schema-to-typescript": "^11.0.2",
+    "mkdirp": "^1.0.4",
+    "node-fetch": "^2.6.6",
+    "openapi-types": "^12.0.2",
+    "ora": "^5.1.2",
+    "rollup": "^3.2.5",
+    "ts-morph": "^16.0.0"
+  }
+}

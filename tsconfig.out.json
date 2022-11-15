@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "es2022",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "stripInternal": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "baseUrl": "./",
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+  },
+  "include": ["./out/http.service.ts"]
+}

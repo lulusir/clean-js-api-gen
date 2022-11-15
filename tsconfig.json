@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "es2022",
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "stripInternal": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "baseUrl": "./",
+    "declaration": false,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+  },
+  "include": ["src/**/*.ts", "rollup.config.ts"]
+}
