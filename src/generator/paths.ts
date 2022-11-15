@@ -1,7 +1,7 @@
 import path from "path";
 
 export class Paths {
-  static outPath = path.join(process.cwd(), `./clean-api`);
+  static outPath = path.join(process.cwd(), `./clean-js`);
 
   static setOutPath (id: string) {
     Paths.outPath = path.join(process.cwd(), id);
