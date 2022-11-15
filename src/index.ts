@@ -1,10 +1,11 @@
-import { pathCase } from "change-case";
 import fs from "fs-extra";
 import jiti from "jiti";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
-import { Parser } from "./parser/parser";
 import { isAbsolute, join } from "path";
+import { Config } from "./config";
+import { Paths } from "./generator/paths";
+import { Parser } from "./parser/parser";
 
 async function main() {
   const rootDir = process.cwd();
@@ -12,7 +13,12 @@ async function main() {
   const require = jiti(rootDir, { interopDefault: true, esmResolve: true });
 
   try {
-    const { url } = require("./clean.config");
+    const { url, outDir } = require("./clean.config") as Config;
+
+    if (outDir) {
+      Paths.setOutPath(outDir);
+    }
+
     if (url.startsWith("http")) {
       let doc = await fetch(url).then((r) => r.json());
       // yapi maybe is array

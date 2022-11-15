@@ -5,9 +5,10 @@ export class Paths {
 
   static setOutPath (id: string) {
     Paths.outPath = path.join(process.cwd(), id);
+    Paths.servicesPath = Paths.outPath
   }
 
-  static servicesPath = path.join(Paths.outPath, "./");
+  static servicesPath = Paths.outPath
 
   static getServicePath(serviceName = "http") {
     return path.join(Paths.servicesPath, `./${serviceName}.service.ts`);

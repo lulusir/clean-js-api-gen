@@ -23,7 +23,7 @@ export class Writer {
     return code;
   }
 
-  static sourceFile: SourceFile = (() => {
+  static getSourceFile() {
     const tplCode = fs.readFileSync(
       path.join(__dirname, "../template/index.tpl.ts"),
       "utf-8"
@@ -34,7 +34,7 @@ export class Writer {
       overwrite: true,
     });
     return s;
-  })();
+  }
 
   static cleanOut() {
     return fs.rm(Paths.outPath, { recursive: true }).catch((err) => {

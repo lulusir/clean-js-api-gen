@@ -17,6 +17,7 @@ export class Parser {
       } else if ((doc as Yapi)?.list) {
         this.parseYapi(doc as Yapi);
       } else {
+        console.error("Unknown Type" + doc);
       }
     } catch (e) {}
   }

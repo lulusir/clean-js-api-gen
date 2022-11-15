@@ -22,7 +22,7 @@ export class RequestGenerator {
   }
 
   async paintRequestsOneFile(requests: RequestAST[]) {
-    const sf = Writer.sourceFile;
+    const sf = Writer.getSourceFile();
     if (requests.length) {
       await Promise.all(
         requests.map(async (s) => {

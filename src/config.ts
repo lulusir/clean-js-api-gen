@@ -1,4 +1,4 @@
-interface Config {
+export interface Config {
   url: string; // http或者文件绝对路径
   outDir?: string;
 }
