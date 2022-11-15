@@ -1,6 +1,6 @@
 {
-  "name": "@clean-js/api-generator",
-  "version": "0.0.2",
+  "name": "@clean-js/api-gen",
+  "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
   "bin": {
