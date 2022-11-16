@@ -1,5 +1,6 @@
 import { OpenAPIV3 } from "openapi-types";
 import { RequestAST, RootAST, SchemaV2AST, SchemaV3AST } from "src/ast";
+import { config } from "src/config";
 import {
   isSimpleType,
   safeName,
@@ -257,41 +258,78 @@ export class RequestGenerator {
         },
       ];
     }
-    const fn = sf?.addFunction({
-      isExported: true,
-      name: s.id,
-      parameters: parameter,
-      statements: (writer) => {
-        writer.write("return Req.request");
-        if (response200Alias) {
-          writer.write(`<${response200Alias.alias}>`);
-        }
-        writer.write("(");
-        writer
-          .block(() => {
-            if (pathAlias.length) {
-              writer.writeLine(
-                `url: replaceUrlPath('${s.url}', parameter?.path),`
-              );
-            } else {
-              writer.writeLine(`url: '${s.url}',`);
-            }
-            writer.writeLine(`method: '${s.method}',`);
-            if (queryAlias.length) {
-              writer.writeLine(`params: parameter.params,`);
-            }
-            if (bodyAlias) {
-              writer.writeLine(`data: parameter.body,`);
-            }
-          })
-          .write(");");
-      },
-    });
 
-    if (s.description) {
-      fn.addJsDoc({
-        description: s.description,
+    if (config.type === "axios") {
+      const fn = sf?.addFunction({
+        isExported: true,
+        name: s.id,
+        parameters: parameter,
+        statements: (writer) => {
+          writer.write("return Req.request");
+          if (response200Alias) {
+            writer.write(`<${response200Alias.alias}>`);
+          }
+          writer.write("(");
+          writer
+            .block(() => {
+              if (pathAlias.length) {
+                writer.writeLine(
+                  `url: replaceUrlPath('${s.url}', parameter?.path),`
+                );
+              } else {
+                writer.writeLine(`url: '${s.url}',`);
+              }
+              writer.writeLine(`method: '${s.method}',`);
+              if (queryAlias.length) {
+                writer.writeLine(`params: parameter.params,`);
+              }
+              if (bodyAlias) {
+                writer.writeLine(`data: parameter.body,`);
+              }
+            })
+            .write(");");
+        },
       });
+
+      if (s.description) {
+        fn.addJsDoc({
+          description: s.description,
+        });
+      }
+    } else if (config.type === "umi3") {
+      const fn = sf?.addFunction({
+        isExported: true,
+        name: s.id,
+        parameters: parameter,
+        statements: (writer) => {
+          writer.write("return Req.request");
+          if (response200Alias) {
+            writer.write(`<${response200Alias.alias}>`);
+          }
+          if (pathAlias.length) {
+            writer.write(`( replaceUrlPath('${s.url}', parameter?.path),`);
+          } else {
+            writer.writeLine(`('${s.url}',`);
+          }
+          writer
+            .block(() => {
+              writer.writeLine(`method: '${s.method}',`);
+              if (queryAlias.length) {
+                writer.writeLine(`params: parameter.params,`);
+              }
+              if (bodyAlias) {
+                writer.writeLine(`data: parameter.body,`);
+              }
+            })
+            .write(");");
+        },
+      });
+
+      if (s.description) {
+        fn.addJsDoc({
+          description: s.description,
+        });
+      }
     }
   }
 

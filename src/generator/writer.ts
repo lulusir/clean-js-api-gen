@@ -4,6 +4,7 @@ import { compile } from "json-schema-to-typescript";
 import mkdirp from "mkdirp";
 import { OpenAPIV2, OpenAPIV3 } from "openapi-types";
 import path from "path";
+import { config } from "src/config";
 import { Project, SourceFile } from "ts-morph";
 import { Paths } from "./paths";
 
@@ -26,8 +27,12 @@ export class Writer {
   }
 
   static getSourceFile() {
+    const tplPaths = {
+      axios: "axios.tpl.ts",
+      umi3: "umi3.tpl.ts",
+    };
     const tplCode = fs.readFileSync(
-      path.join(__dirname, "../template/index.tpl.ts"),
+      path.join(__dirname, "../template/", tplPaths[config.type || "axios"]),
       "utf-8"
     );
 

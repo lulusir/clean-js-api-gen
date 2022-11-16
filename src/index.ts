@@ -3,9 +3,11 @@ import jiti from "jiti";
 import fetch from "node-fetch";
 import { OpenAPIV3 } from "openapi-types";
 import { isAbsolute, join } from "path";
-import { Config } from "./config";
+import { config, Config } from "./config";
 import { Paths } from "./generator/paths";
 import { Parser } from "./parser/parser";
+
+export { defineConfig } from "./config";
 
 async function main() {
   const rootDir = process.cwd();
@@ -13,7 +15,11 @@ async function main() {
   const require = jiti(rootDir, { interopDefault: true, esmResolve: true });
 
   try {
-    const { url, outDir } = require("./clean.config") as Config;
+    const runtimeConfig = require("./clean.config") as Config;
+
+    Object.assign(config, runtimeConfig);
+
+    const { url, outDir } = config;
 
     if (outDir) {
       Paths.setOutPath(outDir);
