@@ -166,16 +166,14 @@ export class RequestGenerator {
                   .write(");");
               },
             });
-            await sf.save();
+            // await sf.save();
           } else {
             console.error("方法已存在", s.id);
           }
         })
       );
     }
-    sf.formatText({
-      indentSize: 2,
-    });
+
     await sf.save();
   }
 

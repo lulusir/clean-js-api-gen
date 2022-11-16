@@ -1,15 +1,12 @@
 import $RefParser from "@apidevtools/json-schema-ref-parser";
 import { OpenAPIV2 } from "openapi-types";
-import {
-  isOperationObjectMethodV2,
-  urlToMethodName
-} from "src/utils";
+import { isOperationObjectMethodV2, urlToMethodName } from "src/utils";
 import {
   RequestAST,
   RequestBodyAST,
   ResponseAST,
   RootAST,
-  SchemaV2AST
+  SchemaV2AST,
 } from "../ast";
 
 export class ParserV2 {
@@ -132,6 +129,14 @@ export class ParserV2 {
   }
 
   async visit_ParameterObjectAST(parameter: OpenAPIV2.ParameterObject) {
+    if (parameter?.type) {
+      const s: SchemaV2AST = {
+        schema: { type: parameter.type },
+        version: "OpenAPIV2",
+      };
+      return s;
+    }
+
     const s = await this.visit_SchemaObject(
       parameter.schema as OpenAPIV2.SchemaObject
     );
