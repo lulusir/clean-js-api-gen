@@ -8,14 +8,17 @@ import chalk from "chalk";
 const log = console.log;
 
 export class Parser {
-  async parse(doc: OpenAPIV2.Document | OpenAPIV3.Document | Yapi) {
+  async parse(
+    doc: OpenAPIV2.Document | OpenAPIV3.Document | Yapi[],
+    url: string
+  ) {
     try {
       if ((doc as OpenAPIV2.Document)?.swagger?.startsWith("2.0")) {
         return this.parseV2(doc as OpenAPIV2.Document);
       } else if ((doc as OpenAPIV3.Document)?.openapi?.startsWith("3.0")) {
         return this.parseV3(doc as OpenAPIV3.Document);
-      } else if ((doc as Yapi)?.list) {
-        return this.parseYapi(doc as Yapi);
+      } else if (Array.isArray(doc)) {
+        return this.parseYapi(doc as Yapi[], url);
       } else {
         console.error("Unknown Type" + doc);
       }
@@ -48,8 +51,8 @@ export class Parser {
     log(chalk("done ..."));
   }
 
-  private async parseYapi(doc: Yapi) {
-    const y2s = new YAPIToSwagger();
+  private async parseYapi(doc: Yapi[], url: string) {
+    const y2s = new YAPIToSwagger(url);
     const got = await y2s.convertToSwaggerV2Model(doc);
     // console.log(JSON.stringify(got, null, 2));
     await this.parseV2(got);

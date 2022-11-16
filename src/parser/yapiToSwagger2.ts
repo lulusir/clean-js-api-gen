@@ -97,28 +97,28 @@ export enum Type {
 }
 
 export class YAPIToSwagger {
-  async convertToSwaggerV2Model(model: Yapi) {
-    const list = model.list;
+  url: URL;
 
+  constructor(url: string) {
+    this.url = new URL(url);
+  }
+
+  async convertToSwaggerV2Model(model: Yapi[]) {
     const swaggerObj: OpenAPIV2.Document = {
       swagger: "2.0",
       info: {
-        title: model.name,
+        title: "",
         version: "last", // last version
-        description: model.desc,
+        description: "",
       },
       //host: "",             // No find any info of host in this point :-)
-      basePath: model?.basepath ? model.basepath : "/", //default base path is '/'(root)
+      basePath: "/", //default base path is '/'(root)
       tags: (() => {
         let tagArray: any[] = [];
-        list.forEach((t) => {
+        model.forEach((t) => {
           tagArray.push({
             name: t?.name || "emptyName",
             description: t.desc,
-            /*externalDocs:{
-                        descroption:"",
-                        url:""
-                    } */
           });
         });
         return tagArray;
@@ -128,19 +128,22 @@ export class YAPIToSwagger {
       ],
       paths: (() => {
         let apisObj: OpenAPIV2.Document["paths"] = {};
-        //list of category
-        for (let api of model.list) {
-          //list of api
-          if (apisObj[api.path] == null) {
-            apisObj[api.path] = {};
-          }
-          apisObj[api.path][api.method.toLowerCase() as OpenAPIV2.HttpMethods] =
-            (() => {
+        for (let m of model) {
+          //list of category
+          for (let api of m.list) {
+            //list of api
+            if (apisObj[api.path] == null) {
+              apisObj[api.path] = {};
+            }
+            apisObj[api.path][
+              api.method.toLowerCase() as OpenAPIV2.HttpMethods
+            ] = (() => {
               let apiItem: OpenAPIV2.OperationObject = {
                 responses: {},
               };
               apiItem["summary"] = api.title;
-              apiItem["description"] = api.markdown;
+              // apiItem["description"] = api.markdown;
+              apiItem["description"] = this.getApiLink(api.project_id, api._id);
               switch (api.req_body_type) {
                 case "form":
                 case "file":
@@ -272,10 +275,18 @@ export class YAPIToSwagger {
               };
               return apiItem;
             })();
+          }
         }
+
         return apisObj;
       })(),
     };
     return swaggerObj;
+  }
+
+  getApiLink(projectId: number, apiId: number) {
+    const url =
+      this.url.origin + `/project/${projectId}/interface/api/${apiId}`;
+    return "Yapi link: " + url;
   }
 }

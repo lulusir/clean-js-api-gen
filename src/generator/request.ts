@@ -257,7 +257,7 @@ export class RequestGenerator {
         },
       ];
     }
-    sf?.addFunction({
+    const fn = sf?.addFunction({
       isExported: true,
       name: s.id,
       parameters: parameter,
@@ -287,6 +287,12 @@ export class RequestGenerator {
           .write(");");
       },
     });
+
+    if (s.description) {
+      fn.addJsDoc({
+        description: s.description,
+      });
+    }
   }
 
   async writeSchema(

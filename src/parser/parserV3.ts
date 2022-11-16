@@ -6,7 +6,7 @@ import {
   RequestBodyAST,
   ResponseAST,
   RootAST,
-  SchemaV3AST
+  SchemaV3AST,
 } from "../ast";
 import { isReferenceObjectV3 } from "../utils";
 
@@ -82,6 +82,7 @@ export class ParserV3 {
       url,
       method,
       responses: [],
+      description: operation.description,
     };
 
     const parametersAll: Promise<any>[] =

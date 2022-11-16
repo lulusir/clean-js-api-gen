@@ -73,6 +73,7 @@ export class ParserV2 {
       url,
       method,
       responses: [],
+      description: operation.description,
     };
 
     const parametersAll: Promise<any>[] =
