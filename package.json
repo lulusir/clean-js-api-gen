@@ -7,6 +7,7 @@
     "api-gen": "./dist/index.js"
   },
   "scripts": {
+    "prepublishOnly": "npm run build && np --no-cleanup --yolo --no-publish --any-branch",
     "dev": "rollup -c -w",
     "build": "rollup --config rollup.config.ts --configPlugin typescript",
     "start": "npm run build && node ./dist/index.js",
@@ -47,6 +48,7 @@
     "json-schema-to-typescript": "^11.0.2",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.6",
+    "np": "^7.6.2",
     "openapi-types": "^12.0.2",
     "ora": "^5.1.2",
     "rollup": "^3.2.5",
