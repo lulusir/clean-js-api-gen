@@ -6,12 +6,12 @@ specifiers:
   '@rollup/plugin-json': ^5.0.1
   '@rollup/plugin-node-resolve': ^15.0.1
   '@rollup/plugin-typescript': ^9.0.2
-  '@types/axios': ^0.14.0
   '@types/fs-extra': ^9.0.13
   '@types/jest': ^27
   '@types/json-schema': ^7.0.11
   '@types/mkdirp': ^1.0.2
   '@types/node-fetch': ^2.6.2
+  axios: ^1.1.3
   chalk: ^4.1.2
   change-case: ^4.1.2
   fs-extra: ^10.1.0
@@ -34,11 +34,11 @@ dependencies:
   '@rollup/plugin-json': registry.npmmirror.com/@rollup/plugin-json/5.0.1_rollup@3.3.0
   '@rollup/plugin-node-resolve': registry.npmmirror.com/@rollup/plugin-node-resolve/15.0.1_rollup@3.3.0
   '@rollup/plugin-typescript': registry.npmmirror.com/@rollup/plugin-typescript/9.0.2_6annma2bj33shm6er7hwi5u4z4
-  '@types/axios': registry.npmmirror.com/@types/axios/0.14.0
   '@types/fs-extra': registry.npmmirror.com/@types/fs-extra/9.0.13
   '@types/json-schema': registry.npmmirror.com/@types/json-schema/7.0.11
   '@types/mkdirp': registry.npmmirror.com/@types/mkdirp/1.0.2
   '@types/node-fetch': registry.npmmirror.com/@types/node-fetch/2.6.2
+  axios: 1.1.3
   chalk: registry.npmmirror.com/chalk/4.1.2
   change-case: registry.npmmirror.com/change-case/4.1.2
   fs-extra: registry.npmmirror.com/fs-extra/10.1.0
@@ -300,6 +300,20 @@ packages:
     engines: {node: '>=0.12.0'}
     dev: false
 
+  /asynckit/0.4.0:
+    resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+    dev: false
+
+  /axios/1.1.3:
+    resolution: {integrity: sha512-00tXVRwKx/FZr/IDVFt4C+f9FYairX517WoGCL6dpOntqLkZofjhu43F/Xl44UOpqa+9sLFDrG/XAnFsUYgkDA==}
+    dependencies:
+      follow-redirects: 1.15.2
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
     dev: false
@@ -510,6 +524,13 @@ packages:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
     dev: false
 
+  /combined-stream/1.0.8:
+    resolution: {integrity: sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==}
+    engines: {node: '>= 0.8'}
+    dependencies:
+      delayed-stream: 1.0.0
+    dev: false
+
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
     dev: false
@@ -608,6 +629,11 @@ packages:
       p-map: 4.0.0
       rimraf: 3.0.2
       slash: 3.0.0
+    dev: false
+
+  /delayed-stream/1.0.0:
+    resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
+    engines: {node: '>=0.4.0'}
     dev: false
 
   /dir-glob/3.0.1:
@@ -766,6 +792,25 @@ packages:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
+    dev: false
+
+  /follow-redirects/1.15.2:
+    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
+  /form-data/4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
     dev: false
 
   /fs.realpath/1.0.0:
@@ -1503,6 +1548,18 @@ packages:
       picomatch: 2.3.1
     dev: false
 
+  /mime-db/1.52.0:
+    resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
+    engines: {node: '>= 0.6'}
+    dev: false
+
+  /mime-types/2.1.35:
+    resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
+    engines: {node: '>= 0.6'}
+    dependencies:
+      mime-db: 1.52.0
+    dev: false
+
   /mimic-fn/1.2.0:
     resolution: {integrity: sha512-jf84uxzwiuiIVKiOLpfYk7N46TSy8ubTonmneY9vrpHNAnp0QBt2BxWV9dO3/j+BoVAb+a5G6YDPW3M5HOdMWQ==}
     engines: {node: '>=4'}
@@ -1924,6 +1981,10 @@ packages:
   /prepend-http/2.0.0:
     resolution: {integrity: sha512-ravE6m9Atw9Z/jjttRUZ+clIXogdghyZAuWJ3qEzjT+jI/dL1ifAqhZeC5VHzQp1MSt1+jxKkFNemj/iO7tVUA==}
     engines: {node: '>=4'}
+    dev: false
+
+  /proxy-from-env/1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
   /pump/3.0.0:
@@ -3444,17 +3505,6 @@ packages:
       path-browserify: registry.npmmirror.com/path-browserify/1.0.1
     dev: false
 
-  registry.npmmirror.com/@types/axios/0.14.0:
-    resolution: {integrity: sha512-KqQnQbdYE54D7oa/UmYVMZKq7CO4l8DEENzOKc4aBRwxCXSlJXGz83flFx5L7AWrOQnmuN3kVsRdt+GZPPjiVQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/axios/-/axios-0.14.0.tgz}
-    name: '@types/axios'
-    version: 0.14.0
-    deprecated: This is a stub types definition for axios (https://github.com/mzabriskie/axios). axios provides its own type definitions, so you don't need @types/axios installed!
-    dependencies:
-      axios: registry.npmmirror.com/axios/1.1.3
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
   registry.npmmirror.com/@types/babel__core/7.1.20:
     resolution: {integrity: sha512-PVb6Bg2QuscZ30FvOU7z4guG6c926D9YRvOxEaelzndpMsvP+YM74Q/dAFASpg2l6+XLalxSGxcq/lrgYWZtyQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@types/babel__core/-/babel__core-7.1.20.tgz}
     name: '@types/babel__core'
@@ -3747,18 +3797,6 @@ packages:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/asynckit/-/asynckit-0.4.0.tgz}
     name: asynckit
     version: 0.4.0
-
-  registry.npmmirror.com/axios/1.1.3:
-    resolution: {integrity: sha512-00tXVRwKx/FZr/IDVFt4C+f9FYairX517WoGCL6dpOntqLkZofjhu43F/Xl44UOpqa+9sLFDrG/XAnFsUYgkDA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/axios/-/axios-1.1.3.tgz}
-    name: axios
-    version: 1.1.3
-    dependencies:
-      follow-redirects: registry.npmmirror.com/follow-redirects/1.15.2
-      form-data: registry.npmmirror.com/form-data/4.0.0
-      proxy-from-env: registry.npmmirror.com/proxy-from-env/1.1.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
 
   registry.npmmirror.com/babel-jest/27.5.1_@babel+core@7.20.2:
     resolution: {integrity: sha512-cdQ5dXjGRd0IBRATiQ4mZGlGlRE8kJpjPOixdNRdT+m3UcNqmYWN6rK6nvtXYfY3D76cb8s/O1Ss8ea24PIwcg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/babel-jest/-/babel-jest-27.5.1.tgz}
@@ -4546,18 +4584,6 @@ packages:
       path-exists: registry.npmmirror.com/path-exists/4.0.0
     dev: true
 
-  registry.npmmirror.com/follow-redirects/1.15.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/follow-redirects/-/follow-redirects-1.15.2.tgz}
-    name: follow-redirects
-    version: 1.15.2
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dev: false
-
   registry.npmmirror.com/form-data/3.0.1:
     resolution: {integrity: sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/form-data/-/form-data-3.0.1.tgz}
     name: form-data
@@ -4567,17 +4593,6 @@ packages:
       asynckit: registry.npmmirror.com/asynckit/0.4.0
       combined-stream: registry.npmmirror.com/combined-stream/1.0.8
       mime-types: registry.npmmirror.com/mime-types/2.1.35
-
-  registry.npmmirror.com/form-data/4.0.0:
-    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/form-data/-/form-data-4.0.0.tgz}
-    name: form-data
-    version: 4.0.0
-    engines: {node: '>= 6'}
-    dependencies:
-      asynckit: registry.npmmirror.com/asynckit/0.4.0
-      combined-stream: registry.npmmirror.com/combined-stream/1.0.8
-      mime-types: registry.npmmirror.com/mime-types/2.1.35
-    dev: false
 
   registry.npmmirror.com/fs-extra/10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/fs-extra/-/fs-extra-10.1.0.tgz}
@@ -6141,12 +6156,6 @@ packages:
       sisteransi: registry.npmmirror.com/sisteransi/1.0.5
     dev: true
 
-  registry.npmmirror.com/proxy-from-env/1.1.0:
-    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/proxy-from-env/-/proxy-from-env-1.1.0.tgz}
-    name: proxy-from-env
-    version: 1.1.0
-    dev: false
-
   registry.npmmirror.com/psl/1.9.0:
     resolution: {integrity: sha512-E/ZsdU4HLs/68gYzgGTkMicWTLPdAftJLfJFlLUAAKZGkStNU72sZjT66SnMDVOfOWY/YAoiD7Jxa9iHvngcag==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/psl/-/psl-1.9.0.tgz}
     name: psl
@@ -6672,7 +6681,6 @@ packages:
     version: 4.9.3
     engines: {node: '>=4.2.0'}
     hasBin: true
-    dev: true
 
   registry.npmmirror.com/universalify/0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/universalify/-/universalify-0.2.0.tgz}
