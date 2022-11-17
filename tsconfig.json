@@ -12,11 +12,11 @@
     "resolveJsonModule": true,
     "importHelpers": true,
     "esModuleInterop": true,
-    "sourceMap": true,
     "baseUrl": "./",
-    "declaration": false,
+    "declaration": true,
+    "declarationDir": "./dist/dts",
     "allowSyntheticDefaultImports": true,
-    "outDir": "./dist",
+    "emitDeclarationOnly": true
   },
-  "include": ["src/**/*.ts", "rollup.config.ts"]
+  "include": ["src/**/*.ts", ]
 }

@@ -1,8 +1,9 @@
 {
   "name": "@clean-js/api-gen",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "bin": {
     "api-gen": "./dist/index.js"
   },
@@ -28,6 +29,7 @@
   "devDependencies": {
     "@types/jest": "^27",
     "jest": "^27",
+    "rollup-plugin-dts": "^5.0.0",
     "typescript": "^4.8.4"
   },
   "dependencies": {
