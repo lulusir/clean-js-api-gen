@@ -7,20 +7,20 @@ import {
   RequestOptionsWithoutResponse,
   RequestOptionsWithResponse,
   RequestResponse,
-} from "umi-request";
+} from 'umi-request';
 
 interface RequestMethodInUmi<R = false> {
   <T = any>(
     url: string,
-    options: RequestOptionsWithResponse & { skipErrorHandler?: boolean }
+    options: RequestOptionsWithResponse & { skipErrorHandler?: boolean },
   ): Promise<RequestResponse<T>>;
   <T = any>(
     url: string,
-    options: RequestOptionsWithoutResponse & { skipErrorHandler?: boolean }
+    options: RequestOptionsWithoutResponse & { skipErrorHandler?: boolean },
   ): Promise<T>;
   <T = any>(
     url: string,
-    options?: RequestOptionsInit & { skipErrorHandler?: boolean }
+    options?: RequestOptionsInit & { skipErrorHandler?: boolean },
   ): R extends true ? Promise<RequestResponse<T>> : Promise<T>;
 }
 
@@ -32,9 +32,15 @@ const proxy = new Proxy(
   {},
   {
     get() {
-      throw Error("Please set request");
+      throw Error(`
+      Please set request
+      
+      import { Req } from '@/clean-js/http.service';
+      function initCleanJsApi() {
+        Req.set(request);
+      }`);
     },
-  }
+  },
 );
 
 export class Req {
