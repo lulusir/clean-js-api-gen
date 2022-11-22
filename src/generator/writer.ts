@@ -1,17 +1,16 @@
-import fs from "fs-extra";
-import { JSONSchema4 } from "json-schema";
-import { compile } from "json-schema-to-typescript";
-import mkdirp from "mkdirp";
-import { OpenAPIV2, OpenAPIV3 } from "openapi-types";
-import path from "path";
-import { config } from "src/config";
-import { Project, SourceFile } from "ts-morph";
-import { Paths } from "./paths";
+import fs from 'fs-extra';
+import { JSONSchema4 } from 'json-schema';
+import { compile } from 'json-schema-to-typescript';
+import mkdirp from 'mkdirp';
+import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
+import path from 'path';
+import { config } from 'src/config';
+import { Project } from 'ts-morph';
 
 export class Writer {
   static async schemaToRenameInterface(
     schema: OpenAPIV3.SchemaObject | OpenAPIV2.SchemaObject,
-    name: string
+    name: string,
   ) {
     const title = name;
     const s = {
@@ -19,7 +18,7 @@ export class Writer {
       title,
     };
     const code = await compile(s as JSONSchema4, title, {
-      bannerComment: "",
+      bannerComment: '',
       format: false,
       additionalProperties: false,
     });
@@ -28,32 +27,32 @@ export class Writer {
 
   static getSourceFile() {
     const tplPaths = {
-      axios: "axios.tpl.ts",
-      umi3: "umi3.tpl.ts",
+      axios: 'axios.tpl.ts',
+      umi3: 'umi3.tpl.ts',
     };
     const tplCode = fs.readFileSync(
-      path.join(__dirname, "../template/", tplPaths[config.type || "axios"]),
-      "utf-8"
+      path.join(__dirname, '../template/', tplPaths[config.type || 'axios']),
+      'utf-8',
     );
 
     const p = new Project({});
-    const s = p.createSourceFile(Paths.getServicePath(), tplCode, {
+    const s = p.createSourceFile(config.getServicePath(), tplCode, {
       overwrite: true,
     });
     return s;
   }
 
   static cleanOut() {
-    return fs.rm(Paths.outPath, { recursive: true }).catch((err) => {
+    return fs.rm(config.getOutPath(), { recursive: true }).catch((err) => {
       console.log(err);
     });
   }
 
   static async writeOutFolder() {
-    if (fs.existsSync(Paths.outPath)) {
+    if (fs.existsSync(config.getOutPath())) {
       await this.cleanOut();
     }
-    await mkdirp(Paths.outPath, {});
+    await mkdirp(config.getOutPath(), {});
   }
 
   static async writeFile(filePath: string, content: any) {
@@ -66,14 +65,4 @@ export class Writer {
       console.log(err);
     }
   }
-
-  // static async transformJs() {
-  //   const { exec } = require("child_process");
-  //   const { error } = await exec("tsc --project tsconfig.out.json");
-
-  //   if (error) {
-  //     console.log(`error: ${error.message}`);
-  //     return;
-  //   }
-  // }
 }

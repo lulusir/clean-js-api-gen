@@ -14,7 +14,14 @@
     "start": "npm run build && node ./dist/index.js",
     "test": "jest"
   },
-  "keywords": [],
+  "keywords": [
+    "Swagger",
+    "Openapi",
+    "Yapi",
+    "Code Generator",
+    "axios",
+    "umi-request"
+  ],
   "authors": [
     "lujavascript@gmail.com"
   ],
