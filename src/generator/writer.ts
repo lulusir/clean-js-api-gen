@@ -50,9 +50,12 @@ export class Writer {
 
   static async writeOutFolder() {
     if (fs.existsSync(config.getOutPath())) {
-      await this.cleanOut();
+      await mkdirp(config.getOutPath(), {});
     }
-    await mkdirp(config.getOutPath(), {});
+    // if (fs.existsSync(config.getOutPath())) {
+    //   await this.cleanOut();
+    // }
+    // await mkdirp(config.getOutPath(), {});
   }
 
   static async writeFile(filePath: string, content: any) {

@@ -1,15 +1,15 @@
-import { OpenAPIV3, OpenAPIV3_1, OpenAPIV2 } from "openapi-types";
+import { OpenAPIV3, OpenAPIV3_1, OpenAPIV2 } from 'openapi-types';
 /**
  * 这里直接生成 typescript ast
  */
 export interface SchemaV3AST {
-  version: "OpenAPIV3";
+  version: 'OpenAPIV3';
 
   schema: OpenAPIV3.SchemaObject;
 }
 
 export interface SchemaV2AST {
-  version: "OpenAPIV2";
+  version: 'OpenAPIV2';
 
   schema: OpenAPIV2.SchemaObject;
 }
@@ -30,14 +30,14 @@ export interface ComponentAST {
 }
 
 type HttpMethods =
-  | "get"
-  | "put"
-  | "post"
-  | "delete"
-  | "options"
-  | "head"
-  | "patch"
-  | "trace";
+  | 'get'
+  | 'put'
+  | 'post'
+  | 'delete'
+  | 'options'
+  | 'head'
+  | 'patch'
+  | 'trace';
 
 export interface RequestAST {
   // 操作的id 通常是唯一的方法名, 不存在的时候 使用 method + url + bodyMediaType
@@ -66,13 +66,13 @@ export interface RequestAST {
 }
 
 export interface RequestBodyAST {
-  type: "json" | "formData";
+  type: 'json' | 'formData';
 
   schema?: SchemaV3AST | SchemaV2AST;
 }
 
 export interface ResponseAST {
-  type: "json" | "javascript" | "html";
+  type: 'json' | 'javascript' | 'html';
 
   status: number;
 
@@ -80,7 +80,5 @@ export interface ResponseAST {
 }
 
 export interface RootAST {
-  components: ComponentAST[];
-
   requests: RequestAST[];
 }

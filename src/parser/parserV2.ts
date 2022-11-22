@@ -1,19 +1,20 @@
-import $RefParser from "@apidevtools/json-schema-ref-parser";
-import { OpenAPIV2 } from "openapi-types";
-import { isOperationObjectMethodV2, urlToMethodName } from "src/utils";
+import $RefParser from '@apidevtools/json-schema-ref-parser';
+import { OpenAPIV2 } from 'openapi-types';
+import { isOperationObjectMethodV2, urlToMethodName } from 'src/utils';
 import {
   RequestAST,
   RequestBodyAST,
   ResponseAST,
   RootAST,
   SchemaV2AST,
-} from "../ast";
+} from '../ast';
 
-export class ParserV2 {
+import { IParser } from './parser';
+
+export class ParserV2 implements IParser {
   constructor(public doc: OpenAPIV2.Document) {}
 
   root: RootAST = {
-    components: [],
     requests: [],
   };
 
@@ -30,16 +31,16 @@ export class ParserV2 {
   }
 
   async visit_SchemaObject(
-    schema: OpenAPIV2.SchemaObject
+    schema: OpenAPIV2.SchemaObject,
   ): Promise<SchemaV2AST> {
     const ast: SchemaV2AST = {
       schema,
-      version: "OpenAPIV2",
+      version: 'OpenAPIV2',
     };
     return ast;
   }
 
-  async visit_paths(paths: OpenAPIV2.Document["paths"]) {
+  async visit_paths(paths: OpenAPIV2.Document['paths']) {
     const pALl: Promise<RequestAST>[] = [];
     Object.entries(paths).forEach(([url, path]) => {
       if (path) {
@@ -49,11 +50,11 @@ export class ParserV2 {
               this.visit_operationObject(
                 operation as OpenAPIV2.OperationObject,
                 url,
-                method
-              )
+                method,
+              ),
             );
           } else {
-            console.log("等待处理其他方法", method);
+            console.log('等待处理其他方法', method);
           }
         });
       }
@@ -66,10 +67,10 @@ export class ParserV2 {
   async visit_operationObject(
     operation: OpenAPIV2.OperationObject,
     url: string,
-    method: OpenAPIV2.HttpMethods
+    method: OpenAPIV2.HttpMethods,
   ) {
     const ast: RequestAST = {
-      id: `${urlToMethodName(method + "/" + url)}`,
+      id: `${urlToMethodName(method + '/' + url)}`,
       url,
       method,
       responses: [],
@@ -80,7 +81,7 @@ export class ParserV2 {
       operation.parameters?.map(async (parameter: OpenAPIV2.Parameter) => {
         if (parameter) {
           const parameterAst = await this.visit_ParameterObjectAST(parameter);
-          if (parameter.in === "path") {
+          if (parameter.in === 'path') {
             if (parameterAst.schema) {
               ast.pathParams = {
                 ...ast.pathParams,
@@ -88,7 +89,7 @@ export class ParserV2 {
               };
             }
           }
-          if (parameter.in === "query") {
+          if (parameter.in === 'query') {
             if (parameterAst) {
               ast.queryParams = {
                 ...ast.queryParams,
@@ -96,10 +97,10 @@ export class ParserV2 {
               };
             }
           }
-          if (parameter.in === "body") {
+          if (parameter.in === 'body') {
             ast.bodyParams = await this.visit_RequestBodyObject(parameter);
           }
-          if (parameter.in === "header") {
+          if (parameter.in === 'header') {
             if (parameterAst) {
               ast.headers = {
                 ...ast.headers,
@@ -107,8 +108,8 @@ export class ParserV2 {
               };
             }
           }
-          if (parameter.in === "cookie") {
-            console.error("skip cookie");
+          if (parameter.in === 'cookie') {
+            console.error('skip cookie');
             // ast.pathParams[parameter.name] = parameterAst
           }
         }
@@ -133,19 +134,19 @@ export class ParserV2 {
     if (parameter?.type) {
       const s: SchemaV2AST = {
         schema: { type: parameter.type },
-        version: "OpenAPIV2",
+        version: 'OpenAPIV2',
       };
       return s;
     }
 
     const s = await this.visit_SchemaObject(
-      parameter.schema as OpenAPIV2.SchemaObject
+      parameter.schema as OpenAPIV2.SchemaObject,
     );
     return s;
   }
 
   async visit_refOrSchema(
-    schema: OpenAPIV2.ReferenceObject | OpenAPIV2.SchemaObject | undefined
+    schema: OpenAPIV2.ReferenceObject | OpenAPIV2.SchemaObject | undefined,
   ) {
     if (schema) {
       const s = await this.visit_SchemaObject(schema);
@@ -160,11 +161,11 @@ export class ParserV2 {
     }
 
     const ast: RequestBodyAST = {
-      type: "json",
+      type: 'json',
     };
 
     ast.schema = await this.visit_SchemaObject(
-      body.schema as OpenAPIV2.SchemaObject
+      body.schema as OpenAPIV2.SchemaObject,
     );
 
     return ast;
@@ -177,11 +178,11 @@ export class ParserV2 {
 
     const ast: ResponseAST = {
       status: 200,
-      type: "json",
+      type: 'json',
     };
 
     ast.schema = await this.visit_refOrSchema(
-      (body as OpenAPIV2.ResponseObject).schema
+      (body as OpenAPIV2.ResponseObject).schema,
     );
     return ast;
   }

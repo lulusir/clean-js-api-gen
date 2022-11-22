@@ -16,6 +16,8 @@ class Config implements IConfig {
   type?: 'umi3' | 'axios' = 'axios'; // default axios
   outDir = 'clean-js';
 
+  // ---
+
   loadRuntime() {
     const rootDir = process.cwd();
     const require = jiti(rootDir, { interopDefault: true, esmResolve: true });
@@ -29,7 +31,11 @@ class Config implements IConfig {
   }
 
   getServicePath(serviceName = 'http') {
-    return path.join(process.cwd(), this.outDir, `./${serviceName}.service.ts`);
+    return path.join(this.getOutPath(), `./${serviceName}.service.ts`);
+  }
+
+  getAstCachePath() {
+    return path.join(this.getOutPath(), '.ast.cache.json');
   }
 }
 

@@ -34,6 +34,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.1.0",
     "@types/jest": "^27",
     "jest": "^27",
     "rollup-plugin-dts": "^5.0.0",
@@ -41,12 +42,14 @@
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^9.0.9",
+    "@lujs/di": "^1.1.8",
     "@rollup/plugin-commonjs": "^23.0.2",
     "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-typescript": "^9.0.2",
     "@types/fs-extra": "^9.0.13",
     "@types/json-schema": "^7.0.11",
+    "@types/lodash": "^4.14.189",
     "@types/mkdirp": "^1.0.2",
     "@types/node-fetch": "^2.6.2",
     "axios": "^1.1.3",
@@ -55,6 +58,7 @@
     "fs-extra": "^10.1.0",
     "jiti": "^1.16.0",
     "json-schema-to-typescript": "^11.0.2",
+    "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.6",
     "np": "^7.6.2",
