@@ -55,6 +55,7 @@
     "axios": "^1.1.3",
     "chalk": "^4.1.2",
     "change-case": "^4.1.2",
+    "dayjs": "^1.11.6",
     "fs-extra": "^10.1.0",
     "jiti": "^1.16.0",
     "json-schema-to-typescript": "^11.0.2",

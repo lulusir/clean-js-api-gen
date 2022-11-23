@@ -17,6 +17,7 @@ specifiers:
   axios: ^1.1.3
   chalk: ^4.1.2
   change-case: ^4.1.2
+  dayjs: ^1.11.6
   fs-extra: ^10.1.0
   jest: ^27
   jiti: ^1.16.0
@@ -48,6 +49,7 @@ dependencies:
   axios: 1.1.3
   chalk: registry.npmmirror.com/chalk/4.1.2
   change-case: registry.npmmirror.com/change-case/4.1.2
+  dayjs: 1.11.6
   fs-extra: registry.npmmirror.com/fs-extra/10.1.0
   jiti: registry.npmmirror.com/jiti/1.16.0
   json-schema-to-typescript: registry.npmmirror.com/json-schema-to-typescript/11.0.2
@@ -651,6 +653,10 @@ packages:
 
   /date-fns/1.30.1:
     resolution: {integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==}
+    dev: false
+
+  /dayjs/1.11.6:
+    resolution: {integrity: sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==}
     dev: false
 
   /decamelize-keys/1.1.1:

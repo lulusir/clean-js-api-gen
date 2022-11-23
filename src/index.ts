@@ -1,7 +1,6 @@
 export { defineConfig } from './config';
 
 import { OpenAPI } from 'openapi-types';
-import { DiffAnalyzer } from './analyzer/diff';
 import { config } from './config';
 import { RequestGenerator } from './generator/request';
 import { loadDoc, processDoc } from './loader';
@@ -18,14 +17,17 @@ async function main() {
     const parser = new Parser();
     const ast = await parser.parse(doc as OpenAPI.Document);
 
-    const diff = new DiffAnalyzer(ast);
-    diff.visit();
-
     log('Generating ...');
     const g = new RequestGenerator(ast);
     await g.paint();
     log('done ...');
     console.timeEnd('Time');
+
+    if (config.diff) {
+      const { fork } = require('child_process');
+      const sender = fork(__dirname + '/diffProcess.js');
+      sender.send(JSON.stringify(ast));
+    }
   } catch (e) {
     console.error(e);
   }

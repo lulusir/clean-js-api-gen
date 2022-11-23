@@ -1,0 +1,81 @@
+{
+  "openapi": "3.0.1",
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "metadata"
+        ],
+        "operationId": "list-data-sets",
+        "summary": "List available data sets",
+        "responses": {
+          "200": {
+            "description": "Returns a list of data sets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/dataSetList"
+                },
+                "example": {
+                  "total": 2,
+                  "apis": [
+                    {
+                      "apiKey": "oa_citations",
+                      "apiVersionNumber": "v1",
+                      "apiUrl": "https://developer.uspto.gov/ds-api/oa_citations/v1/fields",
+                      "apiDocumentationUrl": "https://developer.uspto.gov/ds-api-docs/index.html?url=https://developer.uspto.gov/ds-api/swagger/docs/oa_citations.json"
+                    },
+                    {
+                      "apiKey": "cancer_moonshot",
+                      "apiVersionNumber": "v1",
+                      "apiUrl": "https://developer.uspto.gov/ds-api/cancer_moonshot/v1/fields",
+                      "apiDocumentationUrl": "https://developer.uspto.gov/ds-api-docs/index.html?url=https://developer.uspto.gov/ds-api/swagger/docs/cancer_moonshot.json"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "dataSetList": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer"
+          },
+          "apis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "apiKey": {
+                  "type": "string",
+                  "description": "To be used as a dataset parameter value"
+                },
+                "apiVersionNumber": {
+                  "type": "string",
+                  "description": "To be used as a version parameter value"
+                },
+                "apiUrl": {
+                  "type": "string",
+                  "format": "uriref",
+                  "description": "The URL describing the dataset's fields"
+                },
+                "apiDocumentationUrl": {
+                  "type": "string",
+                  "format": "uriref",
+                  "description": "A URL to the API console for each API"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

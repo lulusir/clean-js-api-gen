@@ -5,6 +5,7 @@ interface IConfig {
   url: string; // http或者文件绝对路径
   outDir?: string;
   type?: 'umi3' | 'axios'; // default axios
+  diff?: boolean; // 是否开启diff功能 default true
 }
 
 export function defineConfig(options: IConfig) {
@@ -15,6 +16,7 @@ class Config implements IConfig {
   url = ''; // http或者文件绝对路径
   type?: 'umi3' | 'axios' = 'axios'; // default axios
   outDir = 'clean-js';
+  diff = true;
 
   // ---
 
@@ -36,6 +38,10 @@ class Config implements IConfig {
 
   getAstCachePath() {
     return path.join(this.getOutPath(), '.ast.cache.json');
+  }
+
+  getLogPath() {
+    return path.join(this.getOutPath(), './log');
   }
 }
 
