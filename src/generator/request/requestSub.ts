@@ -1,19 +1,26 @@
-import { OpenAPIV3 } from "openapi-types";
-import { RequestAST, RootAST, SchemaV2AST, SchemaV3AST } from "src/ast";
-import { config } from "src/config";
+/**
+ * 接收ast。
+ * 编译完成后返回 code string
+ *
+ */
+import { OpenAPIV3 } from 'openapi-types';
+import { RequestAST, RootAST, SchemaV2AST, SchemaV3AST } from 'src/ast';
+import { config } from 'src/config';
 import {
   isSimpleType,
   safeName,
   schemaTypeToJsType,
   urlToMethodName,
-} from "src/utils";
+} from 'src/utils';
 import {
+  Project,
   CodeBlockWriter,
   OptionalKind,
   ParameterDeclarationStructure,
   SourceFile,
-} from "ts-morph";
-import { Writer } from "./writer";
+} from 'ts-morph';
+import { Writer } from '../writer';
+
 type Alias = {
   alias: string;
 };
@@ -31,15 +38,22 @@ type QueryAlias = {
 type BodyAlias = Alias | null;
 
 type Response200Alias = Alias | null;
-export class RequestGenerator {
+
+export class RequestGeneratorSub {
   constructor(public ast: RootAST) {}
 
+  getSourceFile() {
+    const p = new Project({});
+    const s = p.createSourceFile('');
+    return s;
+  }
+
   async paint() {
-    await this.paintRequestsOneFile(this.ast.requests);
+    return await this.paintRequestsOneFile(this.ast.requests);
   }
 
   async paintRequestsOneFile(requests: RequestAST[]) {
-    const sf = Writer.getSourceFile();
+    const sf = this.getSourceFile();
     if (requests.length) {
       await Promise.all(
         requests.map(async (s) => {
@@ -52,13 +66,12 @@ export class RequestGenerator {
             bodyAlias,
             queryAlias,
             pathAlias,
-            response200Alias
+            response200Alias,
           );
-        })
+        }),
       );
     }
-
-    await sf.save();
+    return sf.getText();
   }
 
   async processPrams(sf: SourceFile, s: RequestAST) {
@@ -68,7 +81,7 @@ export class RequestGenerator {
       response200Alias = await this.writeSchema(
         sf,
         res200?.schema,
-        safeName(`Response_${s.id}`)
+        safeName(`Response_${s.id}`),
       );
     }
 
@@ -82,14 +95,14 @@ export class RequestGenerator {
           const alias = await this.writeSchema(
             sf,
             schema,
-            safeName(`PathParams_${s.id}_${name}`)
+            safeName(`PathParams_${s.id}_${name}`),
           );
           pathAlias.push({
             name,
             alias,
           });
         }
-      })
+      }),
     );
 
     const queryAlias: {
@@ -102,23 +115,23 @@ export class RequestGenerator {
           const alias = await this.writeSchema(
             sf,
             schema,
-            safeName(`PathParams_${s.id}_${name}`)
+            safeName(`PathParams_${s.id}_${name}`),
           );
           queryAlias.push({
             name,
             alias,
           });
         }
-      })
+      }),
     );
 
     let bodyAlias: Alias | null = null;
     if (s.bodyParams) {
-      if (s.bodyParams.type === "json") {
+      if (s.bodyParams.type === 'json') {
         bodyAlias = await this.writeSchema(
           sf,
           s.bodyParams.schema,
-          urlToMethodName(s.method + s.url + "Body", "pascal")
+          urlToMethodName(s.method + s.url + 'Body', 'pascal'),
         );
       }
     }
@@ -131,126 +144,43 @@ export class RequestGenerator {
     };
   }
 
-  async generateCls(
-    s: RequestAST,
-    sf: SourceFile,
-    bodyAlias: BodyAlias,
-    queryAlias: QueryAlias,
-    pathAlias: PathAlias,
-    response200Alias: Response200Alias
-  ) {
-    const clsSf = sf?.getClass("HttpService");
-    if (!clsSf?.getMethod(s.id)) {
-      // process parameter
-      let parameter: OptionalKind<ParameterDeclarationStructure>[] = [];
-      if (bodyAlias || queryAlias.length || pathAlias.length) {
-        parameter = [
-          {
-            name: "parameter",
-            type: (writer: CodeBlockWriter) => {
-              writer.block(() => {
-                if (bodyAlias) {
-                  writer.write(`body: ${bodyAlias.alias},`).endsWith(",");
-                }
-                if (queryAlias.length) {
-                  writer
-                    .write("params: ")
-                    .block(() => {
-                      queryAlias.forEach((v) => {
-                        writer.write(`'${v.name}': ${v.alias.alias},`);
-                      });
-                    })
-                    .endsWith(",");
-                }
-                if (pathAlias.length) {
-                  writer
-                    .write("path: ")
-                    .block(() => {
-                      pathAlias.forEach((v) => {
-                        writer.write(`'${v.name}': ${v.alias.alias},`);
-                      });
-                    })
-                    .endsWith(",");
-                }
-              });
-              // console.log(writer.toString(), '=     writer.toString();');
-            },
-          },
-        ];
-      }
-      clsSf?.addMethod({
-        isStatic: true,
-        name: s.id,
-        parameters: parameter,
-        statements: (writer) => {
-          writer.write("return Req.request");
-          if (response200Alias) {
-            writer.write(`<${response200Alias.alias}>`);
-          }
-          writer.write("(");
-          writer
-            .block(() => {
-              if (pathAlias.length) {
-                writer.writeLine(
-                  `url: replaceUrlPath('${s.url}', parameter?.path),`
-                );
-              } else {
-                writer.writeLine(`url: '${s.url}',`);
-              }
-              writer.writeLine(`method: '${s.method}',`);
-              if (queryAlias.length) {
-                writer.writeLine(`params: parameter.params,`);
-              }
-              if (bodyAlias) {
-                writer.writeLine(`data: parameter.body,`);
-              }
-            })
-            .write(");");
-        },
-      });
-      // await sf.save();
-    } else {
-      console.error("方法已存在", s.id);
-    }
-  }
-
   async generateFunc(
     s: RequestAST,
     sf: SourceFile,
     bodyAlias: BodyAlias,
     queryAlias: QueryAlias,
     pathAlias: PathAlias,
-    response200Alias: Response200Alias
+    response200Alias: Response200Alias,
   ) {
     let parameter: OptionalKind<ParameterDeclarationStructure>[] = [];
     if (bodyAlias || queryAlias.length || pathAlias.length) {
       parameter = [
         {
-          name: "parameter",
+          name: 'parameter',
           type: (writer: CodeBlockWriter) => {
             writer.block(() => {
               if (bodyAlias) {
-                writer.write(`body: ${bodyAlias.alias},`).endsWith(",");
+                writer.write(`body: ${bodyAlias.alias},`).endsWith(',');
               }
               if (queryAlias.length) {
                 writer
-                  .write("params: ")
+                  .write('params: ')
                   .block(() => {
                     queryAlias.forEach((v) => {
                       writer.write(`'${v.name}': ${v.alias.alias},`);
                     });
                   })
-                  .endsWith(",");
+                  .endsWith(',');
               }
               if (pathAlias.length) {
                 writer
-                  .write("path: ")
+                  .write('path: ')
                   .block(() => {
                     pathAlias.forEach((v) => {
                       writer.write(`'${v.name}': ${v.alias.alias},`);
                     });
                   })
-                  .endsWith(",");
+                  .endsWith(',');
               }
             });
             // console.log(writer.toString(), '=     writer.toString();');
@@ -258,23 +188,22 @@ export class RequestGenerator {
         },
       ];
     }
-
-    if (config.type === "axios") {
+    if (config.type === 'axios') {
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
         parameters: parameter,
         statements: (writer) => {
-          writer.write("return Req.request");
+          writer.write('return Req.request');
           if (response200Alias) {
             writer.write(`<${response200Alias.alias}>`);
           }
-          writer.write("(");
+          writer.write('(');
           writer
             .block(() => {
               if (pathAlias.length) {
                 writer.writeLine(
-                  `url: replaceUrlPath('${s.url}', parameter?.path),`
+                  `url: replaceUrlPath('${s.url}', parameter?.path),`,
                 );
               } else {
                 writer.writeLine(`url: '${s.url}',`);
@@ -287,7 +216,7 @@ export class RequestGenerator {
                 writer.writeLine(`data: parameter.body,`);
               }
             })
-            .write(");");
+            .write(');');
         },
       });
 
@@ -296,13 +225,13 @@ export class RequestGenerator {
           description: s.description,
         });
       }
-    } else if (config.type === "umi3") {
+    } else if (config.type === 'umi3') {
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
         parameters: parameter,
         statements: (writer) => {
-          writer.write("return Req.request");
+          writer.write('return Req.request');
           if (response200Alias) {
             writer.write(`<${response200Alias.alias}>`);
           }
@@ -321,7 +250,7 @@ export class RequestGenerator {
                 writer.writeLine(`data: parameter.body,`);
               }
             })
-            .write(");");
+            .write(');');
         },
       });
 
@@ -336,13 +265,13 @@ export class RequestGenerator {
   async writeSchema(
     sf: SourceFile,
     schema: SchemaV3AST | SchemaV2AST | undefined,
-    SchemaName: string
+    SchemaName: string,
   ) {
-    let alias = "any";
+    let alias = 'any';
     if (schema) {
       alias = SchemaName;
       const type = schemaTypeToJsType(
-        (schema.schema as OpenAPIV3.SchemaObject)?.type
+        (schema.schema as OpenAPIV3.SchemaObject)?.type,
       );
       if (isSimpleType(type)) {
         alias = type;

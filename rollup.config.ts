@@ -17,10 +17,21 @@ export default defineConfig([
     plugins: [typescript(), json(), terser()],
   },
   {
-    input: 'src/diffProcess.ts',
+    input: 'src/process/diffProcess.ts',
     output: [
       {
-        file: './dist/diffProcess.js',
+        file: './dist/process/diffProcess.js',
+        format: 'cjs',
+        sourcemap: false,
+      },
+    ],
+    plugins: [typescript(), json()],
+  },
+  {
+    input: 'src/process/requestGen.ts',
+    output: [
+      {
+        file: './dist/process/requestGen.js',
         format: 'cjs',
         sourcemap: false,
       },

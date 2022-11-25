@@ -1,7 +1,7 @@
 import jiti from 'jiti';
 import path from 'path';
 
-interface IConfig {
+export interface IConfig {
   url: string; // http或者文件绝对路径
   outDir?: string;
   type?: 'umi3' | 'axios'; // default axios
@@ -26,6 +26,10 @@ class Config implements IConfig {
 
     const runtimeConfig = require('./clean.config') as Config;
     Object.assign(this, runtimeConfig);
+  }
+
+  loadConfig(opt: IConfig) {
+    Object.assign(this, opt);
   }
 
   getOutPath() {

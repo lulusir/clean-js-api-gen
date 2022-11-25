@@ -285,13 +285,14 @@ export class DiffAnalyzer {
     const fileName = date + '.log';
 
     const apiText = (() => {
+      let text = '';
       if (this.log.api.addLen > 0) {
-        return `Added ${this.log.api.addLen} APIs`;
+        text += `Added ${this.log.api.addLen} APIs`;
       }
       if (this.log.api.reduceLen > 0) {
-        return `Reduce ${this.log.api.reduceLen} APIs`;
+        text += ` Reduce ${this.log.api.reduceLen} APIs`;
       }
-      return '';
+      return text;
     })();
 
     const apiDiffText = (() => {

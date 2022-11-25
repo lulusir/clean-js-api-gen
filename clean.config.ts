@@ -1,7 +1,7 @@
 import { defineConfig } from './src/config';
 
 export default defineConfig({
-  // url: "./test.json",
+  url: './test.json',
   // url: "./swagger2.json",
   // url: 'https://petstore3.swagger.io/api/v3/openapi.json', // swagger 3
   // url: 'https://petstore.swagger.io/v2/swagger.json', // swagger 2
@@ -14,6 +14,9 @@ export default defineConfig({
   // url: './example/diff/query.json',
   // url: './example/diff/body.json',
   // url: './example/diff/response.json',
-  url: './example/diff/bigChange.json',
-  type: 'umi3',
+  // url: './example/diff/bigChange.json',
+
+  // url: './buildSwagger.json',
+  // url: './buildSwagger.json',
+  type: 'axios',
 });
