@@ -58,10 +58,13 @@ function initCleanJsApi() {
 }
 ```
 
+## Diff
+当文档发送变化，重新运行api-gen会生成diff记录,格式如下，记录新增，减少，变更多少api
+```
+Date: 2022-11-26 12:26:34
+
+Sum-up: Added 20 APIs Reduce 3 APIs 
+```
+
 Todo
-- 文档 放在clean-js
 - 默认传入header属性，方便覆写
-- umi-plugin3/4 自动生成文件，从umi导出
-- 适配umi-request 
-- tsdoc
-- yapi link
