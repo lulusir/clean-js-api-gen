@@ -20,7 +20,10 @@ async function main() {
     if (config.diff) {
       const { fork } = require('child_process');
       const sender = fork(__dirname + '/process/diffProcess.js');
-      sender.send(JSON.stringify(ast));
+      sender.send(JSON.stringify({
+        config: config,
+        ast: ast,
+      }));
     }
 
     log('Generating ...');
