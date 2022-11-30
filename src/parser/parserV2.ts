@@ -133,7 +133,10 @@ export class ParserV2 implements IParser {
   async visit_ParameterObjectAST(parameter: OpenAPIV2.ParameterObject) {
     if (parameter?.type) {
       const s: SchemaV2AST = {
-        schema: { type: parameter.type },
+        schema: {
+          type: parameter.type,
+          required: parameter.required ? [parameter.name] : [],
+        },
         version: 'OpenAPIV2',
       };
       return s;

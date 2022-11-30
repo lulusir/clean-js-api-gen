@@ -23,6 +23,7 @@ import { Writer } from '../writer';
 
 type Alias = {
   alias: string;
+  required?: boolean; // 基本类型要加上这个属性
 };
 
 type PathAlias = {
@@ -96,6 +97,7 @@ export class RequestGeneratorSub {
             sf,
             schema,
             safeName(`PathParams_${s.id}_${name}`),
+            name,
           );
           pathAlias.push({
             name,
@@ -116,6 +118,7 @@ export class RequestGeneratorSub {
             sf,
             schema,
             safeName(`PathParams_${s.id}_${name}`),
+            name,
           );
           queryAlias.push({
             name,
@@ -167,7 +170,11 @@ export class RequestGeneratorSub {
                   .write('params: ')
                   .block(() => {
                     queryAlias.forEach((v) => {
-                      writer.write(`'${v.name}': ${v.alias.alias},`);
+                      writer.write(
+                        `'${v.name}'${v.alias.required ? ':' : '?:'} ${
+                          v.alias.alias
+                        },`,
+                      );
                     });
                   })
                   .endsWith(',');
@@ -265,16 +272,23 @@ export class RequestGeneratorSub {
   async writeSchema(
     sf: SourceFile,
     schema: SchemaV3AST | SchemaV2AST | undefined,
-    SchemaName: string,
+    newSchemaName: string, // 重新生成的属性名称
+    oldSchemaName?: string, // 旧属性名称
   ) {
     let alias = 'any';
+    let required = true;
     if (schema) {
-      alias = SchemaName;
+      alias = newSchemaName; // 重新生成的接口名称
       const type = schemaTypeToJsType(
         (schema.schema as OpenAPIV3.SchemaObject)?.type,
       );
       if (isSimpleType(type)) {
         alias = type;
+        if (oldSchemaName) {
+          if (!schema.schema.required?.includes(oldSchemaName)) {
+            required = false;
+          }
+        }
       } else {
         const code = await Writer.schemaToRenameInterface(schema.schema, alias);
         sf.insertText(sf.getEnd(), code);
@@ -283,6 +297,7 @@ export class RequestGeneratorSub {
 
     return {
       alias,
+      required,
     };
   }
 }
