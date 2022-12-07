@@ -7,6 +7,7 @@ npm install @clean-js/api-gen
 ## 功能
  - 根据YAPI，swagger2，swagger3等api协议自动生成请求代码
  - 声明完整的Typescript入参和出参类型 
+ - 支持路径参数替换
  - YAPI会在注释中写入该接口的地址
  - 方法命名规则为 method+url；如/user，method：post，生成的代码如下
     ```typescript
