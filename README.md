@@ -10,7 +10,7 @@ npm install @clean-js/api-gen
  - YAPI会在注释中写入该接口的地址
  - 方法命名规则为 method+url；如/user，method：post，生成的代码如下
     ```typescript
-        /** Yapi link: https://yapi.onewo.com/project/2055/interface/api/125352 */
+        /** Yapi link: https://yapi.xxxx.com/project/2055/interface/api/125352 */
     export function postUser(parameter: { body: PostUserBody }) {
       return Req.request<ResponsePostUser>({
         url: '/user',
