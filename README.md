@@ -19,6 +19,26 @@ npm install @clean-js/api-gen
       });
     }
     ```
+- axios 生成代码如下
+    ```typescript
+    export function postDatasetVersionRecords(
+      parameter: {
+        body: any;
+        path: {
+          version: string;
+          dataset: string;
+        };
+      },
+      config?: AxiosRequestConfig,
+    ) {
+      return Req.request<ResponsePostDatasetVersionRecords>({
+        url: replaceUrlPath('/{dataset}/{version}/records', parameter?.path),
+        method: 'post',
+        data: parameter.body,
+        ...config,
+      });
+    }
+    ```
 ## config 
 interface
 ```typescript
