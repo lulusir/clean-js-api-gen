@@ -196,11 +196,16 @@ export class RequestGeneratorSub {
       ];
     }
     if (config.type === 'axios') {
+      parameter.push({
+        name: 'config',
+        hasQuestionToken: true,
+        type: 'AxiosRequestConfig',
+      });
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
         parameters: parameter,
-        statements: (writer) => {
+        statements: (writer: CodeBlockWriter) => {
           writer.write('return Req.request');
           if (response200Alias) {
             writer.write(`<${response200Alias.alias}>`);
@@ -222,6 +227,7 @@ export class RequestGeneratorSub {
               if (bodyAlias) {
                 writer.writeLine(`data: parameter.body,`);
               }
+              writer.writeLine('...config');
             })
             .write(');');
         },
