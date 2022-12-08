@@ -17,13 +17,16 @@ async function main() {
     const parser = new Parser();
     const ast = await parser.parse(doc as OpenAPI.Document);
 
+    // 第一次的时候没有初始化文件夹会报错
     if (config.diff) {
       const { fork } = require('child_process');
       const sender = fork(__dirname + '/process/diffProcess.js');
-      sender.send(JSON.stringify({
-        config: config,
-        ast: ast,
-      }));
+      sender.send(
+        JSON.stringify({
+          config: config,
+          ast: ast,
+        }),
+      );
     }
 
     log('Generating ...');

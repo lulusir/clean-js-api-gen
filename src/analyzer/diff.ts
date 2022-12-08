@@ -83,7 +83,7 @@ export class DiffAnalyzer {
     this.bodyParamsDiff(node, cache);
     this.responsesDiff(node, cache);
     if (this.hasDiff()) {
-      console.log('Note that some APIs have changed ！！！')
+      console.log('Note that some APIs have changed ！！！');
       this.writeLog();
     }
   }
