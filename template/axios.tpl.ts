@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * 该文件自动生产，请勿修改
  * The file is produced automatically, do not modify it
