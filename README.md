@@ -80,7 +80,7 @@ function initCleanJsApi() {
 ```
 
 ## Diff
-当文档发送变化，重新运行api-gen会生成diff记录,格式如下，记录新增，减少，变更多少api
+当文档发生变化，重新运行api-gen会生成diff记录,格式如下，记录新增，减少，变更多少api
 ```
 Date: 2022-11-26 12:26:34
 
