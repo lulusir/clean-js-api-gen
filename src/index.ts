@@ -14,11 +14,8 @@ async function main() {
     const { url } = config;
     let doc = await loadDoc(url);
     doc = await processDoc(doc, url);
-    // console.log(JSON.stringify(doc, null, 2));
     const parser = new Parser();
     const ast = await parser.parse(doc as OpenAPI.Document);
-    // console.log(JSON.stringify(ast, null, 2));
-    // return;
 
     if (ast.requests.length > 0) {
       if (config.diff) {

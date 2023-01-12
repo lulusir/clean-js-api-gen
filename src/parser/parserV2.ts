@@ -145,7 +145,6 @@ export class ParserV2 implements IParser {
     const consumes = operation.consumes;
     if (consumes?.length) {
       if (ast?.headers) {
-        console.log(JSON.stringify(ast.headers, null, 2), '==ah');
         ast.headers['Content-Type'] = {
           schema: {
             type: 'string',
