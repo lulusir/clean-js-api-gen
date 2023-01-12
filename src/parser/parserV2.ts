@@ -112,10 +112,49 @@ export class ParserV2 implements IParser {
             console.error('skip cookie');
             // ast.pathParams[parameter.name] = parameterAst
           }
+          if (parameter.in === 'formData') {
+            // fromData 都写成object格式
+            if (ast.bodyParams) {
+              if (ast.bodyParams.schema?.schema.properties) {
+                ast.bodyParams.schema.schema.properties[parameter.name] = {
+                  type: parameter.type,
+                };
+              }
+            } else {
+              ast.bodyParams = {
+                type: 'formData',
+                schema: {
+                  version: 'OpenAPIV2',
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      [parameter.name]: {
+                        type: parameter.type,
+                      },
+                    },
+                  },
+                },
+              };
+            }
+          }
         }
       }) || [];
 
     await Promise.all(parametersAll);
+
+    const consumes = operation.consumes;
+    if (consumes?.length) {
+      if (ast?.headers) {
+        console.log(JSON.stringify(ast.headers, null, 2), '==ah');
+        ast.headers['Content-Type'] = {
+          schema: {
+            type: 'string',
+            required: ['Content-Type'],
+          },
+          version: 'OpenAPIV2',
+        };
+      }
+    }
 
     // responses
 

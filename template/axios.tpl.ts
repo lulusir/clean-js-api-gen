@@ -9,6 +9,14 @@ function replaceUrlPath(url: string, pathParams: { [key: string]: any } = {}) {
   return url.replace(/\{([^}]+)\}/g, (_, key) => pathParams[key]);
 }
 
+function handleFormData(data: Record<string, any>) {
+  const f = new FormData();
+  Object.entries(data).forEach(([k, v]) => {
+    f.append(k, v);
+  });
+  return f;
+}
+
 const proxy = new Proxy(
   {},
   {

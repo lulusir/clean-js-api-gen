@@ -14,23 +14,32 @@ async function main() {
     const { url } = config;
     let doc = await loadDoc(url);
     doc = await processDoc(doc, url);
+    // console.log(JSON.stringify(doc, null, 2));
     const parser = new Parser();
     const ast = await parser.parse(doc as OpenAPI.Document);
+    // console.log(JSON.stringify(ast, null, 2));
+    // return;
 
-    if (config.diff) {
-      const { fork } = require('child_process');
-      const sender = fork(__dirname + '/process/diffProcess.js');
-      sender.send(JSON.stringify({
-        config: config,
-        ast: ast,
-      }));
+    if (ast.requests.length > 0) {
+      if (config.diff) {
+        const { fork } = require('child_process');
+        const sender = fork(__dirname + '/process/diffProcess.js');
+        sender.send(
+          JSON.stringify({
+            config: config,
+            ast: ast,
+          }),
+        );
+      }
+
+      log('Generating ...');
+      const g = new RequestVisitor(ast);
+      await g.visit();
+      log('done ...');
+      console.timeEnd('Time');
+    } else {
+      throw Error('Has not ast request ');
     }
-
-    log('Generating ...');
-    const g = new RequestVisitor(ast);
-    await g.visit();
-    log('done ...');
-    console.timeEnd('Time');
   } catch (e) {
     console.error(e);
     process.exit();
