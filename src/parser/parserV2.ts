@@ -117,7 +117,7 @@ export class ParserV2 implements IParser {
             if (ast.bodyParams) {
               if (ast.bodyParams.schema?.schema.properties) {
                 ast.bodyParams.schema.schema.properties[parameter.name] = {
-                  type: parameter.type,
+                  type: parameter.type === 'file' ? 'any' : 'string',
                 };
               }
             } else {
@@ -129,7 +129,7 @@ export class ParserV2 implements IParser {
                     type: 'object',
                     properties: {
                       [parameter.name]: {
-                        type: parameter.type,
+                        type: parameter.type === 'file' ? 'any' : 'string',
                       },
                     },
                   },
