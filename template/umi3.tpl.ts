@@ -25,6 +25,8 @@ interface RequestMethodInUmi<R = false> {
   ): R extends true ? Promise<RequestResponse<T>> : Promise<T>;
 }
 
+type RequestUmiOptions = Parameters<RequestMethodInUmi>[1];
+
 function replaceUrlPath(url: string, pathParams: { [key: string]: any } = {}) {
   return url.replace(/\{([^}]+)\}/g, (_, key) => pathParams[key]);
 }

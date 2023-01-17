@@ -267,6 +267,11 @@ export class RequestGeneratorSub {
         });
       }
     } else if (config.type === 'umi3') {
+      parameter.push({
+        name: 'config',
+        hasQuestionToken: true,
+        type: 'RequestUmiOptions',
+      });
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
@@ -296,6 +301,7 @@ export class RequestGeneratorSub {
                   writer.writeLine(`requestType: 'form',`);
                 }
               }
+              writer.writeLine('...config');
             })
             .write(');');
         },
