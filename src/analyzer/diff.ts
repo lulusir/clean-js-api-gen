@@ -85,7 +85,7 @@ export class DiffAnalyzer {
     this.bodyParamsDiff(node, cache);
     this.responsesDiff(node, cache);
     if (this.hasDiff()) {
-      console.log('Note that some APIs have changed ！！！')
+      console.log('Note that some APIs have changed ！！！');
       this.writeLog();
     }
   }
@@ -284,7 +284,7 @@ export class DiffAnalyzer {
 
   writeLog() {
     const dir = config.getLogPath();
-    const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const date = dayjs().format('YYYY-MM-DD_HH:mm:ss');
     const fileName = date + '.log';
 
     const apiText = (() => {
