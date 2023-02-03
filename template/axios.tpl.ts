@@ -1,3 +1,4 @@
+/* eslint-disable */
 /**
  * 该文件自动生产，请勿修改
  * The file is produced automatically, do not modify it
@@ -6,6 +7,14 @@ import { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 function replaceUrlPath(url: string, pathParams: { [key: string]: any } = {}) {
   return url.replace(/\{([^}]+)\}/g, (_, key) => pathParams[key]);
+}
+
+function handleFormData(data: Record<string, any>) {
+  const f = new FormData();
+  Object.entries(data).forEach(([k, v]) => {
+    f.append(k, v);
+  });
+  return f;
 }
 
 const proxy = new Proxy(

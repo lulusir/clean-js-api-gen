@@ -36,7 +36,11 @@ type QueryAlias = {
   alias: Alias;
 }[];
 
-type BodyAlias = Alias | null;
+type BodyAlias =
+  | (Alias & {
+      type: 'json' | 'formData';
+    })
+  | null;
 
 type Response200Alias = Alias | null;
 
@@ -128,14 +132,30 @@ export class RequestGeneratorSub {
       }),
     );
 
-    let bodyAlias: Alias | null = null;
+    let bodyAlias: BodyAlias = null;
     if (s.bodyParams) {
       if (s.bodyParams.type === 'json') {
-        bodyAlias = await this.writeSchema(
+        const a = await this.writeSchema(
           sf,
           s.bodyParams.schema,
           urlToMethodName(s.method + s.url + 'Body', 'pascal'),
         );
+
+        bodyAlias = {
+          ...a,
+          type: 'json',
+        };
+      }
+      if (s.bodyParams.type === 'formData') {
+        const a = await this.writeSchema(
+          sf,
+          s.bodyParams.schema,
+          urlToMethodName(s.method + s.url + 'BodyFile', 'pascal'),
+        );
+        bodyAlias = {
+          ...a,
+          type: 'formData',
+        };
       }
     }
 
@@ -225,7 +245,15 @@ export class RequestGeneratorSub {
                 writer.writeLine(`params: parameter.params,`);
               }
               if (bodyAlias) {
-                writer.writeLine(`data: parameter.body,`);
+                if (bodyAlias.type === 'json') {
+                  writer.writeLine(`data: parameter.body,`);
+                }
+                if (bodyAlias.type === 'formData') {
+                  writer.writeLine(`data: handleFormData(parameter.body),`);
+                  writer.writeLine(`headers: {
+                    'Content-Type': 'multipart/form-data'
+                  },`);
+                }
               }
               writer.writeLine('...config');
             })
@@ -239,6 +267,11 @@ export class RequestGeneratorSub {
         });
       }
     } else if (config.type === 'umi3') {
+      parameter.push({
+        name: 'config',
+        hasQuestionToken: true,
+        type: 'RequestUmiOptions',
+      });
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
@@ -260,8 +293,15 @@ export class RequestGeneratorSub {
                 writer.writeLine(`params: parameter.params,`);
               }
               if (bodyAlias) {
-                writer.writeLine(`data: parameter.body,`);
+                if (bodyAlias.type === 'json') {
+                  writer.writeLine(`data: parameter.body,`);
+                }
+                if (bodyAlias.type === 'formData') {
+                  writer.writeLine(`data: handleFormData(parameter.body),`);
+                  writer.writeLine(`requestType: 'form',`);
+                }
               }
+              writer.writeLine('...config');
             })
             .write(');');
         },

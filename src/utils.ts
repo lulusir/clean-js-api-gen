@@ -62,7 +62,8 @@ export type TsType =
   | 'object'
   | 'null'
   | 'array'
-  | 'undefined';
+  | 'undefined'
+  | 'File';
 
 export function isSimpleType(schemaType: any) {
   return ['number', 'string', 'boolean', 'null'].includes(schemaType);
@@ -77,6 +78,7 @@ export const jsTypeMap: Record<string | 'undefined', TsType> = {
   null: 'null',
   array: 'array',
   undefined: 'undefined',
+  file: 'File',
 };
 
 export function schemaTypeToJsType(type?: string) {

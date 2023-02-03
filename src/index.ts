@@ -17,23 +17,26 @@ async function main() {
     const parser = new Parser();
     const ast = await parser.parse(doc as OpenAPI.Document);
 
-    // 第一次的时候没有初始化文件夹会报错
-    if (config.diff) {
-      const { fork } = require('child_process');
-      const sender = fork(__dirname + '/process/diffProcess.js');
-      sender.send(
-        JSON.stringify({
-          config: config,
-          ast: ast,
-        }),
-      );
-    }
+    if (ast.requests.length > 0) {
+      if (config.diff) {
+        const { fork } = require('child_process');
+        const sender = fork(__dirname + '/process/diffProcess.js');
+        sender.send(
+          JSON.stringify({
+            config: config,
+            ast: ast,
+          }),
+        );
+      }
 
-    log('Generating ...');
-    const g = new RequestVisitor(ast);
-    await g.visit();
-    log('done ...');
-    console.timeEnd('Time');
+      log('Generating ...');
+      const g = new RequestVisitor(ast);
+      await g.visit();
+      log('done ...');
+      console.timeEnd('Time');
+    } else {
+      throw Error('Has not ast request ');
+    }
   } catch (e) {
     console.error(e);
     process.exit();

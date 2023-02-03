@@ -1,4 +1,4 @@
-import { OpenAPIV2 } from "openapi-types";
+import { OpenAPIV2 } from 'openapi-types';
 
 export interface Yapi {
   index: number;
@@ -44,11 +44,11 @@ export interface ListItem {
 }
 
 export enum Method {
-  Delete = "DELETE",
-  Get = "GET",
-  Post = "POST",
-  Put = "PUT",
-  Patch = "PATCH",
+  Delete = 'DELETE',
+  Get = 'GET',
+  Post = 'POST',
+  Put = 'PUT',
+  Patch = 'PATCH',
 }
 
 export interface QueryPath {
@@ -74,10 +74,10 @@ export interface Req {
 }
 
 export enum BodyType {
-  Form = "form",
-  JSON = "json",
-  file = "file",
-  raw = "raw",
+  Form = 'form',
+  JSON = 'json',
+  file = 'file',
+  raw = 'raw',
 }
 
 export interface ReqParam {
@@ -87,13 +87,13 @@ export interface ReqParam {
 }
 
 export enum Status {
-  Done = "done",
-  Undone = "undone",
+  Done = 'done',
+  Undone = 'undone',
 }
 
 export enum Type {
-  Static = "static",
-  Var = "var",
+  Static = 'static',
+  Var = 'var',
 }
 
 export class YAPIToSwagger {
@@ -105,29 +105,29 @@ export class YAPIToSwagger {
 
   async convertToSwaggerV2Model(model: Yapi[]) {
     const swaggerObj: OpenAPIV2.Document = {
-      swagger: "2.0",
+      swagger: '2.0',
       info: {
-        title: "",
-        version: "last", // last version
-        description: "",
+        title: '',
+        version: 'last', // last version
+        description: '',
       },
       //host: "",             // No find any info of host in this point :-)
-      basePath: "/", //default base path is '/'(root)
+      basePath: '/', //default base path is '/'(root)
       tags: (() => {
         let tagArray: any[] = [];
         model.forEach((t) => {
           tagArray.push({
-            name: t?.name || "emptyName",
+            name: t?.name || 'emptyName',
             description: t.desc,
           });
         });
         return tagArray;
       })(),
       schemes: [
-        "http", //Only http
+        'http', //Only http
       ],
       paths: (() => {
-        let apisObj: OpenAPIV2.Document["paths"] = {};
+        let apisObj: OpenAPIV2.Document['paths'] = {};
         for (let m of model) {
           //list of category
           for (let api of m.list) {
@@ -141,37 +141,37 @@ export class YAPIToSwagger {
               let apiItem: OpenAPIV2.OperationObject = {
                 responses: {},
               };
-              apiItem["summary"] = api.title;
+              apiItem['summary'] = api.title;
               // apiItem["description"] = api.markdown;
-              apiItem["description"] = this.getApiLink(api.project_id, api._id);
+              apiItem['description'] = this.getApiLink(api.project_id, api._id);
               switch (api.req_body_type) {
-                case "form":
-                case "file":
-                  apiItem["consumes"] = ["multipart/form-data"]; //form data required
+                case 'form':
+                case 'file':
+                  apiItem['consumes'] = ['multipart/form-data']; //form data required
                   break;
-                case "json":
-                  apiItem["consumes"] = ["application/json"];
+                case 'json':
+                  apiItem['consumes'] = ['application/json'];
                   break;
-                case "raw":
-                  apiItem["consumes"] = ["text/plain"];
+                case 'raw':
+                  apiItem['consumes'] = ['text/plain'];
                   break;
                 default:
                   break;
               }
-              apiItem["parameters"] = (() => {
+              apiItem['parameters'] = (() => {
                 let paramArray = [];
                 for (let p of api.req_headers) {
                   //Headers parameters
                   //swagger has consumes proprety, so skip proprety "Content-Type"
-                  if (p.name === "Content-Type") {
+                  if (p.name === 'Content-Type') {
                     continue;
                   }
                   paramArray.push({
                     name: p.name,
-                    in: "header",
+                    in: 'header',
                     description: `${p.name} (Only:${p.value})`,
                     required: Number(p.required) === 1,
-                    type: "string", //always be type string
+                    type: 'string', //always be type string
                     default: p.value,
                   });
                 }
@@ -179,44 +179,44 @@ export class YAPIToSwagger {
                   //Path parameters
                   paramArray.push({
                     name: p.name,
-                    in: "path",
+                    in: 'path',
                     description: p.desc,
                     required: true, //swagger path parameters required proprety must be always true,
-                    type: "string", //always be type string
+                    type: 'string', //always be type string
                   });
                 }
                 for (let p of api.req_query) {
                   //Query parameters
                   paramArray.push({
                     name: p.name,
-                    in: "query",
+                    in: 'query',
                     required: Number(p.required) === 1,
                     description: p.desc,
-                    type: "string", //always be type string
+                    type: 'string', //always be type string
                   });
                 }
                 switch (
                   api.req_body_type //Body parameters
                 ) {
-                  case "form": {
+                  case 'form': {
                     for (let p of api.req_body_form) {
                       paramArray.push({
                         name: p.name,
-                        in: "formData",
+                        in: 'formData',
                         required: Number(p.required) === 1,
                         description: p.desc,
-                        type: p.type === "text" ? "string" : "file", //in this time .formData type have only text or file
+                        type: p.type === 'text' ? 'string' : 'file', //in this time .formData type have only text or file
                       });
                     }
                     break;
                   }
-                  case "json": {
+                  case 'json': {
                     if (api.req_body_other) {
                       let jsonParam = JSON.parse(api.req_body_other);
                       if (jsonParam) {
                         paramArray.push({
-                          name: "root",
-                          in: "body",
+                          name: 'root',
+                          in: 'body',
                           description: jsonParam.description,
                           schema: jsonParam, //as same as swagger's format
                         });
@@ -224,23 +224,23 @@ export class YAPIToSwagger {
                     }
                     break;
                   }
-                  case "file": {
+                  case 'file': {
                     paramArray.push({
-                      name: "upfile",
-                      in: "formData", //use formData
+                      name: 'upfile',
+                      in: 'formData', //use formData
                       description: api.req_body_other,
-                      type: "file",
+                      type: 'file',
                     });
                     break;
                   }
-                  case "raw": {
+                  case 'raw': {
                     paramArray.push({
-                      name: "raw",
-                      in: "body",
-                      description: "raw paramter",
+                      name: 'raw',
+                      in: 'body',
+                      description: 'raw paramter',
                       schema: {
-                        type: "string",
-                        format: "binary",
+                        type: 'string',
+                        format: 'binary',
                         default: api.req_body_other,
                       },
                     });
@@ -251,16 +251,16 @@ export class YAPIToSwagger {
                 }
                 return paramArray;
               })();
-              apiItem["responses"] = {
-                "200": {
-                  description: "successful operation",
+              apiItem['responses'] = {
+                '200': {
+                  description: 'successful operation',
                   schema: (() => {
                     let schemaObj = {} as OpenAPIV2.SchemaObject;
-                    if (api.res_body_type === "raw") {
-                      schemaObj["type"] = "string";
-                      schemaObj["format"] = "binary";
-                      schemaObj["default"] = api.res_body;
-                    } else if (api.res_body_type === "json") {
+                    if (api.res_body_type === 'raw') {
+                      schemaObj['type'] = 'string';
+                      schemaObj['format'] = 'binary';
+                      schemaObj['default'] = api.res_body;
+                    } else if (api.res_body_type === 'json') {
                       if (api.res_body) {
                         let resBody = JSON.parse(api.res_body);
                         if (resBody !== null) {
@@ -287,6 +287,6 @@ export class YAPIToSwagger {
   getApiLink(projectId: number, apiId: number) {
     const url =
       this.url.origin + `/project/${projectId}/interface/api/${apiId}`;
-    return "Yapi link: " + url;
+    return 'Yapi link: ' + url;
   }
 }

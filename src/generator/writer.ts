@@ -17,9 +17,10 @@ export class Writer {
       ...schema,
       title,
     };
+
     const code = await compile(s as JSONSchema4, title, {
       bannerComment: '',
-      format: false,
+      // format: false,
       additionalProperties: false,
     });
     return code;

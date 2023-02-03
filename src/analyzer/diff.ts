@@ -11,6 +11,7 @@ import { OpenAPIV2, OpenAPIV3 } from 'openapi-types';
 import { join } from 'path';
 import { RequestAST, RootAST } from 'src/ast';
 import { config } from 'src/config';
+import { Writer } from 'src/generator/writer';
 export class DiffAnalyzer {
   cache: RootAST | null = null;
 
@@ -62,14 +63,15 @@ export class DiffAnalyzer {
     }
   }
 
-  writeCache() {
+  async writeCache() {
     const dir = config.getAstCachePath();
+    await Writer.writeOutFolder();
     writeJsonSync(dir, this.root);
   }
 
   async visit() {
     this.readCache();
-    this.writeCache();
+    await this.writeCache();
     if (this.cache === null) {
       return;
     }
@@ -282,7 +284,7 @@ export class DiffAnalyzer {
 
   writeLog() {
     const dir = config.getLogPath();
-    const date = dayjs().format('YYYY-MM-DD HH:mm:ss');
+    const date = dayjs().format('YYYY-MM-DD_HH:mm:ss');
     const fileName = date + '.log';
 
     const apiText = (() => {
