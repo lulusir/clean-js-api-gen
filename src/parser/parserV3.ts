@@ -124,15 +124,15 @@ export class ParserV3 implements IParser {
 
     await Promise.all(parametersAll);
 
-    // body
-
     ast.bodyParams = await this.visit_RequestBodyObject(operation?.requestBody);
 
     // responses
 
     const { responses } = operation;
     if (responses) {
-      const r = await this.visit_ResponseObject(responses[200]);
+      const r = await this.visit_ResponseObject(
+        responses[200] || responses['default'],
+      );
       if (r) {
         ast.responses?.push(r);
       }
