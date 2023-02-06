@@ -284,7 +284,7 @@ export class DiffAnalyzer {
 
   writeLog() {
     const dir = config.getLogPath();
-    const date = dayjs().format('YYYY-MM-DD_HH:mm:ss');
+    const date = dayjs().format('YYYY-MM-DD_HH-mm-ss');
     const fileName = date + '.log';
 
     const apiText = (() => {
