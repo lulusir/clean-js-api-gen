@@ -7,6 +7,7 @@ export class RequestGeneratorMain {
 
   constructor() {
     this.sf = this.getSourceFile();
+    this.addZod(this.sf);
   }
   getSourceFile() {
     const tplPaths = {
@@ -31,5 +32,34 @@ export class RequestGeneratorMain {
 
   async save() {
     await this.sf.save();
+  }
+
+  /**
+   * 添加 zod的依赖
+   */
+  async addZod(sf: SourceFile) {
+    if (config.zod) {
+      sf.addImportDeclaration({
+        namedImports: ['Schema', 'z'],
+        moduleSpecifier: 'zod',
+      });
+      sf.insertText(
+        sf.getEnd(),
+        `function verifyZod(schema: Schema, value) {
+  if (schema) {
+    try {
+      const res = schema?.safeParse?.(value);
+      if (res) {
+        if (!res.success) {
+          console.warn(res.error);
+        }
+      }
+    } catch (error) {
+      // ignore error
+    }
+  }
+}`,
+      );
+    }
   }
 }

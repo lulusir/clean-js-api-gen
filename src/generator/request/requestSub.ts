@@ -3,7 +3,7 @@
  * 编译完成后返回 code string
  *
  */
-import { OpenAPIV3 } from 'openapi-types';
+import { IJsonSchema, OpenAPIV3 } from 'openapi-types';
 import { RequestAST, RootAST, SchemaV2AST, SchemaV3AST } from 'src/ast';
 import { config } from 'src/config';
 import {
@@ -20,10 +20,29 @@ import {
   SourceFile,
 } from 'ts-morph';
 import { Writer } from '../writer';
+import {
+  jsonSchemaToZod,
+  jsonSchemaToZodDereffed,
+  parseSchema,
+} from 'json-schema-to-zod';
+import { JSONSchema7 } from 'json-schema';
+
+async function testZod(myObject: JSONSchema7) {
+  // const module = jsonSchemaToZod(myObject);
+
+  // const dereffed = await jsonSchemaToZodDereffed(myObject);
+
+  const schema = parseSchema(myObject);
+
+  // console.log('module', module);
+  // console.log('dereffed', dereffed);
+  console.log('schema', typeof schema, schema);
+}
 
 type Alias = {
   alias: string;
   required?: boolean; // 基本类型要加上这个属性
+  schema?: SchemaV3AST | SchemaV2AST | undefined;
 };
 
 type PathAlias = {
@@ -221,11 +240,22 @@ export class RequestGeneratorSub {
         hasQuestionToken: true,
         type: 'AxiosRequestConfig',
       });
+      // if (s?.responses?.[0].schema?.schema) {
+      //   testZod(s?.responses?.[0].schema.schema as JSONSchema7);
+      // }
       const fn = sf?.addFunction({
         isExported: true,
         name: s.id,
         parameters: parameter,
         statements: (writer: CodeBlockWriter) => {
+          if (config.zod) {
+            writer.write(
+              `const s = ${parseSchema(
+                response200Alias?.schema?.schema as JSONSchema7,
+              )};`,
+            );
+          }
+
           writer.write('return Req.request');
           if (response200Alias) {
             writer.write(`<${response200Alias.alias}>`);
@@ -257,7 +287,17 @@ export class RequestGeneratorSub {
               }
               writer.writeLine('...config');
             })
-            .write(');');
+            .write(')');
+          if (config.zod) {
+            writer.write(`.then(res => {
+              if (verifyZod && s) {
+                verifyZod(s, res.data)
+              }
+              return res
+            })`);
+          }
+
+          writer.write(';');
         },
       });
 
@@ -277,6 +317,14 @@ export class RequestGeneratorSub {
         name: s.id,
         parameters: parameter,
         statements: (writer) => {
+          if (config.zod) {
+            writer.write(
+              `const s = ${parseSchema(
+                response200Alias?.schema?.schema as JSONSchema7,
+              )};`,
+            );
+          }
+
           writer.write('return Req.request');
           if (response200Alias) {
             writer.write(`<${response200Alias.alias}>`);
@@ -303,7 +351,17 @@ export class RequestGeneratorSub {
               }
               writer.writeLine('...config');
             })
-            .write(');');
+            .write(')');
+          if (config.zod) {
+            writer.write(`.then(res => {
+  if (verifyZod && s) {
+    verifyZod(s, res)
+  }
+  return res
+})`);
+          }
+
+          writer.write(';');
         },
       });
 
@@ -344,6 +402,7 @@ export class RequestGeneratorSub {
     return {
       alias,
       required,
+      schema: schema,
     };
   }
 }

@@ -1,6 +1,7 @@
 import { defineConfig } from './src/config';
 
 export default defineConfig({
+  zod: true,
   url: 'http://yapi.smart-xwork.cn/api/open/plugin/export-full?type=json&pid=186904&status=all&token=59ecff7d43926c3be48f893deba401407f0d819c6c24a99b307a78c0877bc7d2',
   // url: './test.json',
   // url: "./swagger2.json",
@@ -19,5 +20,5 @@ export default defineConfig({
 
   // url: './buildSwagger.json',
   // url: './buildSwagger.json',
-  // type: 'umi3',
+  type: 'umi3',
 });

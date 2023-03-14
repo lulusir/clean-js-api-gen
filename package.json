@@ -59,6 +59,7 @@
     "fs-extra": "^10.1.0",
     "jiti": "^1.16.0",
     "json-schema-to-typescript": "^11.0.2",
+    "json-schema-to-zod": "^0.6.3",
     "lodash": "^4.17.21",
     "mkdirp": "^1.0.4",
     "node-fetch": "^2.6.6",
@@ -67,6 +68,7 @@
     "ora": "^5.1.2",
     "rollup": "^3.2.5",
     "ts-morph": "^17.0.1",
-    "umi-request": "^1.4.0"
+    "umi-request": "^1.4.0",
+    "zod": "^3.21.4"
   }
 }

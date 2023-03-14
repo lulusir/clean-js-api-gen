@@ -6,6 +6,11 @@ export interface IConfig {
   outDir?: string;
   type?: 'umi3' | 'axios'; // default axios
   diff?: boolean; // 是否开启diff功能 default true
+  zod?: boolean; // 是否开启zod校验
+  mock?: {
+    mode: 'all' | 'include' | 'exclude';
+    paths?: string[]; // include or exclude paths
+  };
 }
 
 export function defineConfig(options: IConfig) {
@@ -17,6 +22,7 @@ class Config implements IConfig {
   type?: 'umi3' | 'axios' = 'axios'; // default axios
   outDir = 'clean-js';
   diff = true;
+  zod = false;
 
   // ---
 
