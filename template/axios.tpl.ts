@@ -32,14 +32,25 @@ const proxy = new Proxy(
   },
 );
 
+type ZodErrorHandler = (error: Error, value: any, url: string, schema) => void;
+
 export class Req {
   static get request(): AxiosInstance {
     return Req._instance;
   }
-
   static _instance = proxy as AxiosInstance;
 
   static set(req: AxiosInstance) {
     Req._instance = req;
+  }
+
+  static _zodErrorHandler: ZodErrorHandler = () => {};
+
+  static setZodErrorHandler(handler: ZodErrorHandler) {
+    if (typeof handler === 'function') {
+      Req._zodErrorHandler = handler;
+    } else {
+      console.log('setZodErrorHandler need a function parameters');
+    }
   }
 }

@@ -45,13 +45,14 @@ export class RequestGeneratorMain {
       });
       sf.insertText(
         sf.getEnd(),
-        `function verifyZod(schema: Schema, value) {
+        `function verifyZod(schema: Schema, value:any, url: string) {
   if (schema) {
     try {
       const res = schema?.safeParse?.(value);
       if (res) {
         if (!res.success) {
-          console.warn(res.error);
+          console.warn('zod verify error on url: ' + url, res.error);
+          Req._zodErrorHandler(res.error, value, url, schema)
         }
       }
     } catch (error) {

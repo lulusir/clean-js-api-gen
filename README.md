@@ -47,6 +47,7 @@ export interface Config {
   url: string; // http或者文件绝对路径
   outDir?: string; // 输出文件路径，默认为./clean-js
   type?: "umi3" | "axios"; // 生成的代码类型，umi3是基于umi-request请求库,  默认为 axios
+  zod?: boolean; // 是否开启zod校验, 用于运行时校验数据类型
 }
 ```
 新建clean.config.ts
@@ -87,5 +88,24 @@ Date: 2022-11-26 12:26:34
 Sum-up: Added 20 APIs Reduce 3 APIs 
 ```
 
-Todo
-- 默认传入header属性，方便覆写
+
+## 运行时类型校验
+开启zod，可以用于接口返回数据的类型校验，发现线上问题
+在config文件中开启zod即可
+
+```typescript
+export default {
+  ...
+  zod: true
+}
+```
+配置错误处理函数
+```typescript
+import { Req } from '@/clean-js/http.service';
+
+Req.setZodErrorHandler((error, value, url, schema ) => {
+    // 你可以在这里上报错误
+    console.log(error)
+});
+
+```

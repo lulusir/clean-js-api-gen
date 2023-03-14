@@ -291,7 +291,7 @@ export class RequestGeneratorSub {
           if (config.zod) {
             writer.write(`.then(res => {
               if (verifyZod && s) {
-                verifyZod(s, res.data)
+                verifyZod(s, res.data, '${s.url}')
               }
               return res
             })`);
@@ -355,7 +355,7 @@ export class RequestGeneratorSub {
           if (config.zod) {
             writer.write(`.then(res => {
   if (verifyZod && s) {
-    verifyZod(s, res)
+    verifyZod(s, res, '${s.url}')
   }
   return res
 })`);

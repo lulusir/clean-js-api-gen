@@ -54,6 +54,7 @@ const proxy = new Proxy(
   },
 );
 
+type ZodErrorHandler = (error: Error, value: any, url: string, schema) => void;
 export class Req {
   static get request(): RequestMethodInUmi {
     return Req._instance;
@@ -63,5 +64,15 @@ export class Req {
 
   static set(req: RequestMethodInUmi) {
     Req._instance = req;
+  }
+
+  static _zodErrorHandler: ZodErrorHandler = () => {};
+
+  static setZodErrorHandler(handler: ZodErrorHandler) {
+    if (typeof handler === 'function') {
+      Req._zodErrorHandler = handler;
+    } else {
+      console.log('setZodErrorHandler need a function parameters');
+    }
   }
 }
