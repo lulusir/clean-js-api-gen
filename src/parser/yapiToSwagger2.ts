@@ -195,60 +195,63 @@ export class YAPIToSwagger {
                     type: 'string', //always be type string
                   });
                 }
-                switch (
-                  api.req_body_type //Body parameters
-                ) {
-                  case 'form': {
-                    for (let p of api.req_body_form) {
-                      paramArray.push({
-                        name: p.name,
-                        in: 'formData',
-                        required: Number(p.required) === 1,
-                        description: p.desc,
-                        type: p.type === 'text' ? 'string' : 'file', //in this time .formData type have only text or file
-                      });
-                    }
-                    break;
-                  }
-                  case 'json': {
-                    if (api.req_body_other) {
-                      let jsonParam = JSON.parse(api.req_body_other);
-                      if (jsonParam) {
+                if (api.method.toLowerCase() !== 'get') {
+                  switch (
+                    api.req_body_type //Body parameters
+                  ) {
+                    case 'form': {
+                      for (let p of api.req_body_form) {
                         paramArray.push({
-                          name: 'root',
-                          in: 'body',
-                          description: jsonParam.description,
-                          schema: jsonParam, //as same as swagger's format
+                          name: p.name,
+                          in: 'formData',
+                          required: Number(p.required) === 1,
+                          description: p.desc,
+                          type: p.type === 'text' ? 'string' : 'file', //in this time .formData type have only text or file
                         });
                       }
+                      break;
                     }
-                    break;
+                    case 'json': {
+                      if (api.req_body_other) {
+                        let jsonParam = JSON.parse(api.req_body_other);
+                        if (jsonParam) {
+                          paramArray.push({
+                            name: 'root',
+                            in: 'body',
+                            description: jsonParam.description,
+                            schema: jsonParam, //as same as swagger's format
+                          });
+                        }
+                      }
+                      break;
+                    }
+                    case 'file': {
+                      paramArray.push({
+                        name: 'upfile',
+                        in: 'formData', //use formData
+                        description: api.req_body_other,
+                        type: 'file',
+                      });
+                      break;
+                    }
+                    case 'raw': {
+                      paramArray.push({
+                        name: 'raw',
+                        in: 'body',
+                        description: 'raw paramter',
+                        schema: {
+                          type: 'string',
+                          format: 'binary',
+                          default: api.req_body_other,
+                        },
+                      });
+                      break;
+                    }
+                    default:
+                      break;
                   }
-                  case 'file': {
-                    paramArray.push({
-                      name: 'upfile',
-                      in: 'formData', //use formData
-                      description: api.req_body_other,
-                      type: 'file',
-                    });
-                    break;
-                  }
-                  case 'raw': {
-                    paramArray.push({
-                      name: 'raw',
-                      in: 'body',
-                      description: 'raw paramter',
-                      schema: {
-                        type: 'string',
-                        format: 'binary',
-                        default: api.req_body_other,
-                      },
-                    });
-                    break;
-                  }
-                  default:
-                    break;
                 }
+
                 return paramArray;
               })();
               apiItem['responses'] = {
