@@ -6,6 +6,7 @@ import { RequestVisitor } from './generator/request/visitor';
 import { loadDoc, processDoc } from './loader';
 import { log } from './log';
 import { Parser } from './parser';
+import { SwmVisitor } from './generator/serviceWorkerMock/generate';
 
 async function main() {
   try {
@@ -29,11 +30,15 @@ async function main() {
         );
       }
 
-      log('Generating ...');
-      const g = new RequestVisitor(ast);
-      await g.visit();
-      log('done ...');
-      console.timeEnd('Time');
+      // log('Generating ...');
+      // const g = new RequestVisitor(ast);
+      // await g.visit();
+      // log('done ...');
+      // console.timeEnd('Time');
+
+      // service mock gen
+      const swm = new SwmVisitor(ast);
+      await swm.visit();
     } else {
       throw Error('Has not ast request ');
     }

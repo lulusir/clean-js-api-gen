@@ -8,8 +8,8 @@ export interface IConfig {
   diff?: boolean; // 是否开启diff功能 default true
   zod?: boolean; // 是否开启zod校验
   mock?: {
-    mode: 'all' | 'include' | 'exclude';
-    paths?: string[]; // include or exclude paths
+    includePath?: string[];
+    excludePath?: string[];
   };
 }
 
@@ -23,6 +23,10 @@ class Config implements IConfig {
   outDir = 'clean-js';
   diff = true;
   zod = false;
+  mock = {
+    includePath: [] as string[],
+    excludePath: [] as string[],
+  };
 
   // ---
 
@@ -44,6 +48,10 @@ class Config implements IConfig {
 
   getServicePath(serviceName = 'http') {
     return path.join(this.getOutPath(), `./${serviceName}.service.ts`);
+  }
+
+  getMockPath(serviceName = 'http') {
+    return path.join(this.getOutPath(), `./${serviceName}.mock.ts`);
   }
 
   getAstCachePath() {

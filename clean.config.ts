@@ -21,4 +21,7 @@ export default defineConfig({
   // url: './buildSwagger.json',
   // url: './buildSwagger.json',
   type: 'umi3',
+  mock: {
+    includePath: ['/api/form/file', '/api/user*'],
+  },
 });
