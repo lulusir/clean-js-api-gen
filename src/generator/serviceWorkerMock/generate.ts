@@ -82,61 +82,68 @@ ${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
    * @returns
    */
   filterAst() {
-    const originIncludes = config.mock.includePath;
+    if (typeof config.mock !== 'boolean') {
+      const originIncludes = config.mock?.includePath || [];
 
-    const originExcludes = config.mock.excludePath;
+      const originExcludes = config.mock?.excludePath || [];
 
-    if (!originIncludes?.length && !originExcludes?.length) {
-      return this.ast;
+      if (!originIncludes?.length && !originExcludes?.length) {
+        return this.ast;
+      }
+
+      const filteredData: RequestAST[] = [];
+
+      this.ast.requests.forEach((request) => {
+        const path = request.url;
+        let includeMatch = false;
+        let excludeMatch = false;
+
+        if (originIncludes?.includes(path)) {
+          includeMatch = true;
+        }
+
+        for (const includePattern of originIncludes) {
+          if (includePattern.endsWith('*')) {
+            const prefix = includePattern.slice(0, -1);
+            if (path.startsWith(prefix)) {
+              includeMatch = true;
+              break;
+            }
+          }
+        }
+
+        if (originExcludes?.includes(path)) {
+          excludeMatch = true;
+        }
+
+        for (const excludePattern of originExcludes) {
+          if (excludePattern.endsWith('*')) {
+            const prefix = excludePattern.slice(0, -1);
+            if (path.startsWith(prefix)) {
+              excludeMatch = true;
+              break;
+            }
+          }
+        }
+
+        if (!excludeMatch && includeMatch) {
+          filteredData.push(request);
+        }
+      });
+
+      // console.log(this.ast.requests);
+      // console.log('========');
+      // console.log(filteredData);
+
+      const ast: RootAST = {
+        requests: filteredData,
+      };
+      return ast;
+    } else {
+      const ast: RootAST = {
+        requests: [],
+      };
+      return ast;
     }
-
-    const filteredData: RequestAST[] = [];
-
-    this.ast.requests.forEach((request) => {
-      const path = request.url;
-      let includeMatch = false;
-      let excludeMatch = false;
-
-      if (originIncludes?.includes(path)) {
-        includeMatch = true;
-      }
-
-      for (const includePattern of originIncludes) {
-        if (includePattern.endsWith('*')) {
-          const prefix = includePattern.slice(0, -1);
-          if (path.startsWith(prefix)) {
-            includeMatch = true;
-            break;
-          }
-        }
-      }
-
-      if (originExcludes?.includes(path)) {
-        excludeMatch = true;
-      }
-
-      for (const excludePattern of originExcludes) {
-        if (excludePattern.endsWith('*')) {
-          const prefix = excludePattern.slice(0, -1);
-          if (path.startsWith(prefix)) {
-            excludeMatch = true;
-            break;
-          }
-        }
-      }
-
-      if (!excludeMatch && includeMatch) {
-        filteredData.push(request);
-      }
-    });
-
-    // console.log(this.ast.requests);
-    // console.log('========');
-    // console.log(filteredData);
-
-    const ast: RootAST = {
-      requests: filteredData,
-    };
-    return ast;
   }
 }

@@ -7,10 +7,12 @@ export interface IConfig {
   type?: 'umi3' | 'axios'; // default axios
   diff?: boolean; // 是否开启diff功能 default true
   zod?: boolean; // 是否开启zod校验
-  mock?: {
-    includePath?: string[];
-    excludePath?: string[];
-  };
+  mock?:
+    | {
+        includePath?: string[];
+        excludePath?: string[];
+      }
+    | boolean;
 }
 
 export function defineConfig(options: IConfig) {
@@ -23,10 +25,8 @@ class Config implements IConfig {
   outDir = 'clean-js';
   diff = true;
   zod = false;
-  mock = {
-    includePath: [] as string[],
-    excludePath: [] as string[],
-  };
+
+  mock = false as IConfig['mock'];
 
   // ---
 

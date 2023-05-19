@@ -21,8 +21,8 @@ export default defineConfig({
   // url: './buildSwagger.json',
   // url: './buildSwagger.json',
   type: 'umi3',
-  mock: {
-    includePath: ['/store/*'],
-    excludePath: ['/store/order/*'],
-  },
+  // mock: {
+  //   includePath: ['/store/*'],
+  //   excludePath: ['/store/order/*'],
+  // },
 });
