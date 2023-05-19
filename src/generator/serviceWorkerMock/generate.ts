@@ -34,8 +34,8 @@ export class SwmVisitor {
   }
 
   async paint() {
+    const sf = this.getSourceFile();
     if (this.realAst.requests.length) {
-      const sf = this.getSourceFile();
       const apiRoutesDeclaration = sf.getVariableDeclaration('apiRoutes');
       if (apiRoutesDeclaration) {
         const apiRoutesArrayLiteral = apiRoutesDeclaration.getInitializerIfKind(
@@ -71,8 +71,8 @@ ${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
         }
       }
       sf.formatText();
-      sf.save();
     }
+    await sf.save();
   }
 
   /**
@@ -86,7 +86,7 @@ ${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
 
     const originExcludes = config.mock.excludePath;
 
-    if (!originIncludes.length && !originExcludes.length) {
+    if (!originIncludes?.length && !originExcludes?.length) {
       return this.ast;
     }
 
@@ -97,12 +97,10 @@ ${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
       let includeMatch = false;
       let excludeMatch = false;
 
-      // 检查是否存在匹配的全匹配项
       if (originIncludes?.includes(path)) {
         includeMatch = true;
       }
 
-      // 检查是否存在匹配的模糊匹配项
       for (const includePattern of originIncludes) {
         if (includePattern.endsWith('*')) {
           const prefix = includePattern.slice(0, -1);
@@ -113,12 +111,20 @@ ${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
         }
       }
 
-      // 检查是否存在匹配的排除项
       if (originExcludes?.includes(path)) {
         excludeMatch = true;
       }
 
-      // 如果既不匹配排除项也不匹配包含项，则将路径添加到过滤后的数组中
+      for (const excludePattern of originExcludes) {
+        if (excludePattern.endsWith('*')) {
+          const prefix = excludePattern.slice(0, -1);
+          if (path.startsWith(prefix)) {
+            excludeMatch = true;
+            break;
+          }
+        }
+      }
+
       if (!excludeMatch && includeMatch) {
         filteredData.push(request);
       }

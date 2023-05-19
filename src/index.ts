@@ -30,15 +30,20 @@ async function main() {
         );
       }
 
-      // log('Generating ...');
-      // const g = new RequestVisitor(ast);
-      // await g.visit();
-      // log('done ...');
-      // console.timeEnd('Time');
+      log('Generating ...');
+      const g = new RequestVisitor(ast);
+      const swm = new SwmVisitor(ast);
+
+      // code gen
+      const p1 = g.visit();
 
       // service mock gen
-      const swm = new SwmVisitor(ast);
-      await swm.visit();
+      const p2 = swm.visit();
+
+      await p1;
+      await p2;
+      log('done ...');
+      console.timeEnd('Time');
     } else {
       throw Error('Has not ast request ');
     }
