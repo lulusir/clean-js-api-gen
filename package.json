@@ -71,7 +71,7 @@
     "rollup": "^3.2.5",
     "ts-morph": "^17.0.1",
     "umi-request": "^1.4.0",
-    "worker-webserver": "^0.1.1",
+    "worker-webserver": "^0.1.2",
     "zod": "^3.21.4"
   }
 }

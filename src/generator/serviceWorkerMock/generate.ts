@@ -55,12 +55,19 @@ export class SwmVisitor {
     {
       path: '${url}',
       method: '${method}',
-      handler: async (params) => {
+      handler: async (ctx) => {
 ${sText}
 
 const mockData = generateMock(s);
 
-${isJson ? 'return JSON.stringify(mockData);' : 'return mockData;'}
+
+${isJson ? 'ctx.res.headers.set("content-type", "application/json");' : ''}
+
+${
+  isJson
+    ? 'ctx.res.body = JSON.stringify(mockData);'
+    : 'ctx.res.body = mockData;'
+}
       },
     }
   `;

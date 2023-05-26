@@ -36,7 +36,7 @@ specifiers:
   ts-morph: ^17.0.1
   typescript: ^4.8.4
   umi-request: ^1.4.0
-  worker-webserver: ^0.0.5
+  worker-webserver: ^0.1.2
   zod: ^3.21.4
 
 dependencies:
@@ -70,7 +70,7 @@ dependencies:
   rollup: registry.npmmirror.com/rollup/3.3.0
   ts-morph: 17.0.1
   umi-request: 1.4.0
-  worker-webserver: 0.0.5
+  worker-webserver: 0.1.2
   zod: registry.npmmirror.com/zod/3.21.4
 
 devDependencies:
@@ -2747,8 +2747,8 @@ packages:
       string-width: 4.2.3
     dev: false
 
-  /worker-webserver/0.0.5:
-    resolution: {integrity: sha512-qTn94d0SNJx3bd9rQpwN3tCHzGsgsPvus9GPEVNi7BNBHXkCQ4ICZB9GQhC4l4dDkftgwkNy5dguEG08eMDYSg==}
+  /worker-webserver/0.1.2:
+    resolution: {integrity: sha512-rQ0B9myr4G37PUB/BumbTGvPTLZBHP9cUXYwTJKSh6lAvN+yLCY6zK/EVzm6lE0zUYsydITx0UdafeR6oEPAIw==}
     hasBin: true
     dependencies:
       commander: 10.0.1
