@@ -109,3 +109,78 @@ Req.setZodErrorHandler((error, value, url, schema ) => {
 });
 
 ```
+## mock
+依赖于worker-webserver的功能，我们可以使用Service Worker来模拟接口请求。具体步骤如下：
+
+1. 安装依赖项：
+
+```bash
+npm install worker-webserver @anatine/zod-mock @faker-js/faker --save
+```
+2. 使用CLI命令导出sw.js文件，并将其放置在静态资源目录中。如果你正在使用Vite或Umi，对应的目录是public文件夹：
+
+```bash
+
+npx worker-webserver --out public
+```
+
+3. 启用API-gen的mock功能
+
+  ```typescript
+  // ./clean.config.ts
+  import { defineConfig } from './src/config';
+
+  export default defineConfig({
+    zod: true,
+    url: 'https://petstore3.swagger.io/api/v3/openapi.json', // swagger 3
+    type: 'umi3',
+    mock: {}, // default false
+  });
+
+  ```
+4. 在你的业务代码中你可以通过include和exclude来筛选需要的路由：
+  ```typescript
+  import { apiRoutes, includePath } from "./api/http.mock"; // 生成的文件
+   let routes = includePath(apiRoutes, ["/api/*"]);
+   routes = excludePath(routes, ["/api/test/*"]);
+  ```
+
+4. 在你的业务代码中开启worker服务器：
+  ```typescript
+    import { App, Route } from "worker-webserver";
+    import { apiRoutes, includePath } from "./api/http.mock"; // 生成的文件
+
+    function openMock() {
+      const app = new App();
+      app.addRoutes(apiRoutes);
+      
+      // 添加服务的中间件，以下功能为统一业务code为200
+      app.use(async (ctx, next) => {
+        await next();
+      
+        // unified code to 200
+        if (ctx.res.body) {
+          const contentType = ctx.res.headers.get("content-type");
+          if (contentType === "application/json") {
+            try {
+              const body = JSON.parse(ctx.res.body);
+              if (body.code) {
+                body.code = 200;
+              }
+              ctx.res.body = JSON.stringify(body);
+            } catch {}
+          }
+        }
+      });
+      
+      // 启动worker服务器
+      app.start();
+    }
+  ```
+
+5. 如果需要关闭，执行以下命令关闭worker服务器：
+  ```typescript
+    app.stop();
+  ```
+
+这样就可以使用Service Worker来模拟接口请求了。
