@@ -7,8 +7,10 @@ import { config } from 'src/config';
 export class RequestVisitor {
   constructor(public ast: RootAST) {}
 
+  singleMax = 100;
+
   async visit() {
-    if (this.ast.requests.length < 100) {
+    if (this.ast.requests.length < this.singleMax) {
       const code = await new RequestGeneratorSub(this.ast).paint();
       const r = new RequestGeneratorMain();
       r.insertCode(code);
@@ -23,7 +25,7 @@ export class RequestVisitor {
       // 每个进程最多处理100条, 总数超过核心*100再平分
       const numCPUs = cpus().length;
 
-      const singleMax = 100;
+      const singleMax = this.singleMax;
       const maxNum = numCPUs * singleMax;
 
       let queue: RequestAST[][] = [];
@@ -37,10 +39,13 @@ export class RequestVisitor {
           queue[j].push(v);
         });
       } else {
-        for (let i = 0; i < this.ast.requests.length; i++) {
+        let i = 0;
+        while (i < this.ast.requests.length) {
           const q: RequestAST[] = [];
           while (q.length < singleMax) {
-            q.push(this.ast.requests[i++]);
+            const r = this.ast.requests[i];
+            i += 1;
+            q.push(r);
             if (i >= this.ast.requests.length) {
               break;
             }
