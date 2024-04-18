@@ -18,6 +18,7 @@ import {
   OptionalKind,
   ParameterDeclarationStructure,
   SourceFile,
+  ModuleDeclarationKind,
 } from 'ts-morph';
 import { Writer } from '../writer';
 import {
@@ -103,9 +104,11 @@ export class RequestGeneratorSub {
     if (s.responses?.length) {
       const res200 = s.responses.filter((v) => v.status === 200)[0];
       response200Alias = await this.writeSchema(
+        'N' + s.id + '.' + 'Res',
         sf,
         res200?.schema,
-        safeName(`Response_${s.id}`),
+        // safeName(`Response_${s.id}`),
+        'Response',
       );
     }
 
@@ -117,9 +120,11 @@ export class RequestGeneratorSub {
       Object.entries(s?.pathParams || {})?.map(async ([name, schema]) => {
         if (schema) {
           const alias = await this.writeSchema(
+            'N' + s.id + '.' + 'Path',
             sf,
             schema,
-            safeName(`PathParams_${s.id}_${name}`),
+            // safeName(`PathParams_${s.id}_${name}`),
+            safeName(name),
             name,
           );
           pathAlias.push({
@@ -138,9 +143,11 @@ export class RequestGeneratorSub {
       Object.entries(s?.queryParams || {})?.map(async ([name, schema]) => {
         if (schema) {
           const alias = await this.writeSchema(
+            'N' + s.id + '.' + 'Query',
             sf,
             schema,
-            safeName(`PathParams_${s.id}_${name}`),
+            // safeName(`PathParams_${s.id}_${name}`),
+            safeName(name),
             name,
           );
           queryAlias.push({
@@ -155,9 +162,11 @@ export class RequestGeneratorSub {
     if (s.bodyParams) {
       if (s.bodyParams.type === 'json') {
         const a = await this.writeSchema(
+          'N' + s.id + '.' + 'Body',
           sf,
           s.bodyParams.schema,
-          urlToMethodName(s.method + s.url + 'Body', 'pascal'),
+          // urlToMethodName(s.method + s.url + 'Body', 'pascal'),
+          'Body',
         );
 
         bodyAlias = {
@@ -167,9 +176,11 @@ export class RequestGeneratorSub {
       }
       if (s.bodyParams.type === 'formData') {
         const a = await this.writeSchema(
+          'N' + s.id + '.' + 'Body',
           sf,
           s.bodyParams.schema,
-          urlToMethodName(s.method + s.url + 'BodyFile', 'pascal'),
+          // urlToMethodName(s.method + s.url + 'BodyFile', 'pascal'),
+          'BodyFile',
         );
         bodyAlias = {
           ...a,
@@ -374,6 +385,7 @@ export class RequestGeneratorSub {
   }
 
   async writeSchema(
+    namespace: string,
     sf: SourceFile,
     schema: SchemaV3AST | SchemaV2AST | undefined,
     newSchemaName: string, // 重新生成的属性名称
@@ -381,6 +393,12 @@ export class RequestGeneratorSub {
   ) {
     let alias = 'any';
     let required = true;
+    let ns = namespace;
+    let subNs = '';
+    if (ns.includes('.')) {
+      [ns, subNs] = namespace.split('.');
+    }
+
     if (schema) {
       alias = newSchemaName; // 重新生成的接口名称
       const type = schemaTypeToJsType(
@@ -395,8 +413,37 @@ export class RequestGeneratorSub {
         }
       } else {
         const code = await Writer.schemaToRenameInterface(schema.schema, alias);
-        sf.insertText(sf.getEnd(), code);
+        // sf.insertText(sf.getEnd(), code);
+
+        let module =
+          sf.getModule(ns) ||
+          sf.addModule({
+            name: ns,
+            isExported: true,
+          });
+        module.setDeclarationKind(ModuleDeclarationKind.Namespace);
+
+        if (subNs) {
+          let subModule =
+            module.getModule(subNs) ||
+            module.addModule({
+              name: subNs,
+              isExported: true,
+            });
+
+          subModule.insertText(subModule.getEnd() - 1, code);
+        } else {
+          module.insertText(module.getEnd() - 1, code);
+        }
       }
+    }
+
+    if (alias === newSchemaName) {
+      let t = ns;
+      if (subNs) {
+        t += '.' + subNs;
+      }
+      alias = t + '.' + alias;
     }
 
     return {
